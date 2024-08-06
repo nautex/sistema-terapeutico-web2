@@ -22,6 +22,14 @@ const useStyles = makeStyles((theme) => ({
           "& .MuiGrid-root": {
               padding: "5px 0px 0px 0px",
           },
+    },
+    tableRow: {
+        '&:nth-of-type(even)': {
+            backgroundColor: theme.palette.action.selected,
+        },
+        '&:last-child td, &:last-child th': {
+            borderRadius: '0.5em 0.5em 0.5em 0.5em'
+        },
     }
 }));
 
@@ -181,17 +189,6 @@ const PersonDocument = () => {
         setOnlyOneTypeDocument(!!countDuplicateDocumentTypes)
     }
 
-    const StyledTableRow = styled(TableRow)(({ theme }) => ({
-        '&:nth-of-type(even)': {
-            backgroundColor: theme.palette.action.selected,
-            // backgroundColor: "gray",
-        },
-        // hide last border
-        '&:last-child td, &:last-child th': {
-          border: 0,
-        },
-      }));
-
     return (
         <Grid container>
             <Grid item>
@@ -214,7 +211,7 @@ const PersonDocument = () => {
                 <Table size="small" classes={{root: classes.paddingTableCell}}>
                     <TableBody>
                         {personaDocumentos.map((row) => (
-                            <StyledTableRow key={row.numero}>
+                            <TableRow key={row.numero} classes={{root: classes.tableRow}}>
                                 <TableCell>
                                     <Grid container spacing={1} padding={1}>
                                         <Grid item xs={8} sm={5}>
@@ -324,7 +321,7 @@ const PersonDocument = () => {
                                         </Grid>
                                     </Grid>
                                 </TableCell>
-                            </StyledTableRow>
+                            </TableRow>
                         ))}
                     </TableBody>
                 </Table>

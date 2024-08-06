@@ -5,16 +5,18 @@ AS
 		,a.IdTerapia
 		,a.Numero
 		,a.IdPeriodo
-		,b.IdTipo
-		,b.Tipo
+		,b.IdTipoTerapia
+		,b.TipoTerapia
 		,b.FechaInicio
 		,b.Codigo CodigoPeriodo
-		,b.IdEstado
-		,e.Descripcion EstadoPeriodo
+		,b.IdEstadoApertura
+		,b.EstadoApertura
 		,d.Participante
-		,d.Terapeutas
-		,c.Abreviado AS AbreviaturaEstado
-		,c.Descripcion AS Estado
+		,d.IdTerapeuta
+		,d.Terapeuta
+		,a.IdTarifa
+		,a.IdEstado
+		,c.Abreviado AS Estado
 		
 		#,a.IdLocal
 		#,b.Codigo AS Local
@@ -30,15 +32,12 @@ AS
 		#,a.SesionesMes
 
 	from terapiaperiodo a 
-	left join vw_periodo b ON
+	inner join vw_periodo b ON
 		a.IdPeriodo = b.IdPeriodo
+		AND b.IdEstado = 2
 	left join catalogo c ON
 		a.IdEstado = c.IdCatalogo
-	left join vw_terapiaresumen d ON
+	inner join vw_terapiaresumen d ON
 		a.IdTerapia = d.IdTerapia
 		AND a.Numero = d.Numero
-	left join catalogo e ON
-		b.IdEstado = e.IdCatalogo
-	
-		
-	
+		AND d.IdEstado = 2

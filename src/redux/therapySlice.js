@@ -55,11 +55,13 @@ const initialState = {
     listLocales: [{id: 0, descripcion: ""}],
     listParticipantes: [{id: 0, descripcion: ""}],
     listSalones: [{id: 0, descripcion: ""}],
+    listTipos: [{id: 0, descripcion: ""}],
     listEstados: [{id: 0, descripcion: ""}],
     validationActive: {
         local: false,
         codigoTarifa: false,
         fechaInicio: false,
+        idTipo: false,
     },
     validationMessage: [],
   }
@@ -96,6 +98,9 @@ const initialState = {
       setListSalones: (state, action) => {
         state.listSalones = action.payload;
       },
+      setListTipos: (state, action) => {
+        state.listTipos = action.payload;
+      },
       setListEstados: (state, action) => {
         state.listEstados = action.payload;
       },
@@ -103,6 +108,6 @@ const initialState = {
   });
   
   export const { setEntity, setData, setValidationMessage, activeValidations
-    , setListLocales, setListParticipantes, setListSalones, setListEstados } = therapySlice.actions;
+    , setListLocales, setListParticipantes, setListSalones, setListTipos, setListEstados } = therapySlice.actions;
   export default therapySlice.reducer;
   

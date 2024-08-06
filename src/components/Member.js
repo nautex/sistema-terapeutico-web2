@@ -1,6 +1,6 @@
 import { FormControl, Grid, IconButton, TextField, Typography, Autocomplete
-    , FormControlLabel, Checkbox, Box } from '@mui/material';
-import { Search as IconSearch } from "@mui/icons-material";
+    , FormControlLabel, Checkbox, Box, Stack } from '@mui/material';
+import { Search as IconSearch, AddCircle as IconAddCircle } from "@mui/icons-material";
 import axios from 'axios';
 import moment from 'moment';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -15,6 +15,9 @@ import { makeStyles } from "@mui/styles";
 const useStyles = makeStyles((theme) => ({
     paddingTableCell: {
           "& .MuiCardContent-root": {
+              padding: "5px 0px 0px 0px",
+          },
+          "& .MuiGrid-root": {
               padding: "5px 0px 0px 0px",
           },
     }
@@ -113,12 +116,14 @@ const Member = () => {
             {/* {JSON.stringify(validation)}
             {JSON.stringify(validate)} */}
             {/* {JSON.stringify(participante)} */}
-            <Typography variant="h7" gutterBottom>
-                <Box sx={{ fontWeight: 'bold' }} padding={1}>
-                    Datos Basicos
+            <Grid item>
+                <Box sx={{ fontWeight: 'bold' }} padding={0}>
+                    <Typography variant="h7">
+                        Datos Basicos
+                    </Typography>
                 </Box>
-            </Typography>
-            <Grid container spacing={2}>
+            </Grid>
+            <Grid container spacing={2} padding={"12px 0px 0px 0px"}>
                 <Grid item xs={12} sm={3}>
                     <FormControl required fullWidth error={validate.participante && validation.participante.error}>
                         <Autocomplete
@@ -258,29 +263,25 @@ const Member = () => {
                     />
                 </Grid> */}
                 <Grid item xs={12} sm={4}>
-                    <Grid container>
-                        <Grid item xs={10} sm={10}>
-                            <TextField
-                                disabled
-                                required
-                                name="direccionCasoAccidente"
-                                label="Direcccion"
-                                value={participante.direccionCasoAccidente}
-                                fullWidth
-                                // onChange={(event) => {
-                                //     setItemValue(row.numero, "direccionCasoAccidente", event.target.value);
-                                // }}
-                                size="small"
-                            />
-                        </Grid>
-                        <Grid item xs={2} sm={2}>
-                            <IconButton aria-label="Buscar Direccion" onClick={() => {
-                                openCloseDirectionSearch()
-                            }}>
-                                <IconSearch />
-                            </IconButton>
-                        </Grid>
-                    </Grid>
+                    <Stack alignItems="center" direction="row" gap={2}>
+                        <TextField
+                            disabled
+                            required
+                            name="direccionCasoAccidente"
+                            label="Direcccion"
+                            value={participante.direccionCasoAccidente}
+                            fullWidth
+                            // onChange={(event) => {
+                            //     setItemValue(row.numero, "direccionCasoAccidente", event.target.value);
+                            // }}
+                            size="small"
+                        />
+                        <IconButton aria-label="Buscar Direccion" onClick={() => {
+                            openCloseDirectionSearch()
+                        }}>
+                            <IconSearch />
+                        </IconButton>
+                    </Stack>
                 </Grid>
                 <Grid item xs={12} sm={3}>
                     <FormControlLabel control={
@@ -288,7 +289,6 @@ const Member = () => {
                             name="tieneDiagnostico"
                             checked={participante.tieneDiagnostico}
                             onChange={(event, newValue) => {
-                                console.log(event)
                                 dispatch(setData({name: "tieneDiagnostico", value: event.target.checked}))
                             }}
                             size='small'

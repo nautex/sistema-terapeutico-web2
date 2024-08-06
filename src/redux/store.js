@@ -18,6 +18,19 @@ import therapyTherapistReducer from "./therapyTherapistSlice";
 import therapyMemberReducer from "./therapyMemberSlice";
 import therapySearchReducer from "./therapySearchSlice";
 import feeSearchReducer from "./feeSearchSlice";
+import therapyPeriodSearchReducer from "./therapyPeriodSearchSlice";
+import periodSearchReducer from "./periodSearchSlice";
+import periodReducer from "./periodSlice";
+import therapyPeriodOpenReducer from "./therapyPeriodOpenSlice";
+import sessionTherapistSearchReducer from "./sessionTherapistSearchSlice";
+import sessionReducer from "./sessionSlice";
+import sessionTherapistReducer from "./sessionTherapistSlice";
+import sessionSearchReducer from "./sessionSearchSlice";
+import feeReducer from "./feeSlice";
+import sessionCriterionReducer from "./sessionCriterionSlice";
+import therapyPlanSearchReducer from "./therapyPlanSearchSlice";
+import therapyPlanReducer from "./therapyPlanSlice";
+import therapyPlanAreaReducer from "./therapyPlanAreaSlice";
 
 export const store = configureStore({
   reducer: {
@@ -40,6 +53,19 @@ export const store = configureStore({
     therapyMember: therapyMemberReducer,
     therapySearch: therapySearchReducer,
     feeSearch: feeSearchReducer,
+    therapyPeriodSearch: therapyPeriodSearchReducer,
+    periodSearch: periodSearchReducer,
+    period: periodReducer,
+    therapyPeriodOpen: therapyPeriodOpenReducer,
+    sessionTherapistSearch: sessionTherapistSearchReducer,
+    session: sessionReducer,
+    sessionTherapist: sessionTherapistReducer,
+    sessionSearch: sessionSearchReducer,
+    fee: feeReducer,
+    sessionCriterion: sessionCriterionReducer,
+    therapyPlanSearch: therapyPlanSearchReducer,
+    therapyPlan: therapyPlanReducer,
+    therapyPlanArea: therapyPlanAreaReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({
     serializableCheck: false,

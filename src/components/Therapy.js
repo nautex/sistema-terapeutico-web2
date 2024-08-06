@@ -3,22 +3,22 @@ import { FormControl, Grid, IconButton, InputLabel, Select, TextField
 import { Search as IconSearch } from "@mui/icons-material";
 import axios from 'axios';
 import moment from 'moment';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { setEntity, setData, setValidationMessage, activeValidations
-    , setListLocales, setListParticipantes, setListSalones, setListEstados } from "../redux/therapySlice";
+    , setListLocales, setListParticipantes, setListSalones, setListTipos, setListEstados } from "../redux/therapySlice";
 import { FormHelperText as HelperText } from '@mui/material';
 import FeeSearch from './FeeSearch';
+// import { setListTipos } from '../redux/feeSearchSlice';
 
 const Therapy = () => {
     const params = useParams();
     const entity = useSelector((state) => state.therapy.entity);
     const defaultEntity = useSelector((state) => state.therapy.defaultEntity);
     const listLocales = useSelector((state) => state.therapy.listLocales);
-    const listParticipantes = useSelector((state) => state.therapy.listParticipantes);
-    //const listTipos= useSelector((state) => state.therapy.listTipos);
     const listSalones= useSelector((state) => state.therapy.listSalones);
+    const listTipos= useSelector((state) => state.therapy.listTipos);
     const listEstados = useSelector((state) => state.therapy.listEstados);
     const validate = useSelector((state) => state.therapy.validationActive);
     const dispatch = useDispatch();
@@ -29,6 +29,10 @@ const Therapy = () => {
         local: {
             error: entity.local.length < 1,
             message: "Falta ingresar el local",
+        },
+        idTipo: {
+            error: entity.idTipo < 1,
+            message: "Falta ingresar el tipo de terapia",
         },
         codigoTarifa: {
             error: entity.codigoTarifa.length < 1,
@@ -41,7 +45,7 @@ const Therapy = () => {
     }
     const openCloseFeeSearch = () => { setOpenFeeSearch(!openFeeSearch); }
 
-    const fetchEntity = useCallback(async () => {
+    const fetchEntity = async () => {
         const response = await axios
             .get("https://localhost:44337/Terapia/GetTerapiaView?idTerapia=" + params.id)
             .catch((err) => {
@@ -58,8 +62,8 @@ const Therapy = () => {
             dispatch(setEntity(response.data.data));
             fetchListSalones(response.data.data.idLocal);
         }
-    }, [])
-    const fetchListLocales = useCallback(async () => {
+    }
+    const fetchListLocales = async () => {
         const response = await axios
             .get("https://localhost:44337/Local/GetsList")
             .catch((err) => {
@@ -67,8 +71,8 @@ const Therapy = () => {
             });
         
         dispatch(setListLocales(response.data.data));
-    }, [])
-    const fetchListParticipantes = useCallback(async () => {
+    }
+    const fetchListParticipantes = async () => {
         const response = await axios
             .get("https://localhost:44337/Persona/GetsListPersonByTypeAndName?idType=24&name=")
             .catch((err) => {
@@ -76,37 +80,37 @@ const Therapy = () => {
             });
         
         dispatch(setListParticipantes(response.data.data));
-    }, [])
-    // const fetchListTipos = useCallback(async () => {
-    //     const response = await axios
-    //         .get("https://localhost:44337/Catalogo/GetCatalogosByIdPadreInLista?idPadre=49")
-    //         .catch((err) => {
-    //             console.log("Err: ", err)
-    //         });
-    //     dispatch(setListTipos(response.data.data));
-    // }, [])
-    const fetchListSalones = useCallback(async (idLocal) => {
+    }
+    const fetchListSalones = async (idLocal) => {
         const response = await axios.get("https://localhost:44337/Salon/GetsListByIdLocal?idLocal=" + idLocal)
             .catch((err) => {
                 console.log("Err: ", err)
             });
 
         dispatch(setListSalones(response.data.data));
-    }, [])
-    const fetchListEstados = useCallback(async () => {
+    }
+    const fetchListTipos = async () => {
+        const response = await axios
+            .get("https://localhost:44337/Catalogo/GetCatalogosByIdPadreInLista?idPadre=49")
+            .catch((err) => {
+                console.log("Err: ", err)
+            });
+        dispatch(setListTipos(response.data.data));
+    }
+    const fetchListEstados = async () => {
         const response = await axios
             .get("https://localhost:44337/Catalogo/GetCatalogosByIdPadreInLista?idPadre=1")
             .catch((err) => {
                 console.log("Err: ", err)
             });
         dispatch(setListEstados(response.data.data));
-    }, [])
+    }
 
     useEffect(() => {
         fetchEntity();
         fetchListLocales();
         fetchListParticipantes();
-        // fetchListTipos();
+        fetchListTipos();
         fetchListEstados();
         dispatch(setValidationMessage(messagesValidation()));
     }, []);
@@ -143,12 +147,14 @@ const Therapy = () => {
             {/* {JSON.stringify(validation)}
             {JSON.stringify(validate)} */}
             {/* {JSON.stringify(entity)} */}
-            <Typography variant="h7" gutterBottom>
-                <Box sx={{ fontWeight: 'bold' }} padding={1}>
-                    Datos Basicos
+            <Grid item>
+                <Box sx={{ fontWeight: 'bold' }} padding={0}>
+                    <Typography variant="h7">
+                        Datos Basicos
+                    </Typography>
                 </Box>
-            </Typography>
-            <Grid container spacing={2}>
+            </Grid>
+            <Grid container spacing={2} padding={"12px 0px 0px 0px"}>
                 <Grid item xs={6} sm={3}>
                     <FormControl required fullWidth>
                         <InputLabel htmlFor="input-local">Local</InputLabel>
@@ -178,7 +184,7 @@ const Therapy = () => {
                             }}
                             size="small"
                         >
-                            <option key={0} value={0}>{""}</option>
+                            <option key={0} value={0}>{"(Seleccione)"}</option>
                             {listLocales.map((row) => (
                                 <option key={row.id} value={row.id}>{row.descripcion}</option>
                             ))}
@@ -186,81 +192,72 @@ const Therapy = () => {
                     </FormControl>
                 </Grid>
                 <Grid item xs={6} sm={3}>
-                    <FormControl fullWidth>
-                        <InputLabel htmlFor="input-salon">Salon</InputLabel>
-                        <Select
-                            //native={!tiposDocumentos.length == 0}
-                            native
-                            //defaultValue={0}
-                            label="Salon"
-                            value={entity.idSalon}
-                            fullWidth
-                            onChange={(event, newValue) => {
-                                dispatch(setData({name: "idSalon", value: event.target.value}))
-                            }}
-                            inputProps={{
-                                name: 'idSalon',
-                                id: 'input-salon',
-                            }}
-                            size="small"
-                        >
-                            <option key={0} value={0}>{""}</option>
-                            {listSalones.map((row) => (
-                                <option key={row.id} value={row.id}>{row.descripcion}</option>
-                            ))}
-                        </Select>
-                        {/* <HelperText>
-                            {validate.DNIWith8Digits && validation.DNIWith8Digits.error ? validation.DNIWith8Digits.message : ""}
-                        </HelperText>
-                        <HelperText>
-                            {validate.AnyDocumentAtLeast3Digits && validation.AnyDocumentAtLeast3Digits.error ? validation.AnyDocumentAtLeast3Digits.message : ""}
-                        </HelperText> */}
-                    </FormControl>
-                </Grid>
-                <Grid item xs={6} sm={3}>
-                    <TextField
-                        required
-                        name="fechaInicio"
-                        label="Fecha Inicio"
-                        fullWidth
-                        type="date"
-                        //defaultValue={moment()}
-                        value={moment(entity.fechaInicio).format('yyyy-MM-DD')}
-                        onChange={setDataEntity}
-                        error={validate.fechaInicio && validation.fechaInicio.error}
-                        helperText={validate.fechaInicio && validation.fechaInicio.error ? validation.fechaInicio.message : ""}
-                        size="small"
-                    />
-                </Grid>
-                <Grid item xs={6} sm={3}>
-                    <Stack alignItems="center" direction="row" gap={2}>
-                        <TextField
-                            disabled
-                            required
-                            name="codigoTarifa"
-                            label="Tarifa"
-                            fullWidth
-                            value={entity.codigoTarifa}
-                            size="small"
-                        />
-                        <IconButton aria-label="Buscar Tarifa" size='small' onClick={() => {
-                            openCloseFeeSearch()
-                        }}>
-                            <IconSearch />
-                        </IconButton>
-                    </Stack>
-                </Grid>
-                <FeeSearch open={openFeeSearch} openClose={openCloseFeeSearch} setSelection={setSelectFeeSearch} />
-                <Grid item xs={6} sm={3}>
-                    <TextField
+                    {/* <TextField
                         disabled
                         name="tipo"
                         label="Tipo"
                         fullWidth
                         value={entity.tipo}
                         size="small"
-                    />
+                    /> */}
+                    <FormControl required fullWidth error={validate.idTipo && validation.idTipo.error}>
+                        <InputLabel htmlFor="input-tipo">Tipo</InputLabel>
+                        <Select
+                            //native={!tiposDocumentos.length == 0}
+                            native
+                            //defaultValue={0}
+                            label="tipo"
+                            value={entity.idTipo}
+                            fullWidth
+                            onChange={(event, newValue) => {
+                                var id = event.nativeEvent.target.selectedIndex;
+
+                                dispatch(setData({name: "idTipo", value: event.target.value}))
+                                dispatch(setData({name: "tipo", value: event.nativeEvent.target[id].text}))
+                            }}
+                            inputProps={{
+                                name: 'idTipo',
+                                id: 'input-tipo',
+                            }}
+                            size="small"
+                            // error={validate.idTipo && validation.idTipo.error}
+                            // helperText={validate.idTipo && validation.idTipo.error ? validation.idTipo.message : ""}
+                        >
+                            <option key={0} value={0}>{"(Seleccione)"}</option>
+                            {listTipos.map((row) => (
+                                <option key={row.id} value={row.id}>{row.descripcion}</option>
+                            ))}
+                        </Select>
+                        <HelperText>{validate.idTipo && validation.idTipo.error ? validation.idTipo.message : ""}</HelperText>
+                    </FormControl>
                 </Grid>
+                <Grid item xs={6} sm={3}>
+                    <FormControl required fullWidth error={validate.codigoTarifa && validation.codigoTarifa.error}>
+                        <Stack alignItems="center" direction="row" gap={2}>
+                            <TextField
+                                disabled
+                                required
+                                name="codigoTarifa"
+                                label="Tarifa"
+                                fullWidth
+                                value={entity.codigoTarifa}
+                                size="small"
+                                // error={validate.codigoTarifa && validation.codigoTarifa.error}
+                                // helperText={validate.codigoTarifa && validation.codigoTarifa.error ? validation.codigoTarifa.message : ""}
+                            />
+                            <IconButton aria-label="Buscar Tarifa" size='small' onClick={() => {
+                                openCloseFeeSearch()
+                            }}>
+                                <IconSearch />
+                            </IconButton>
+                        </Stack>
+                        <HelperText>{validate.codigoTarifa && validation.codigoTarifa.error ? validation.codigoTarifa.message : ""}</HelperText>
+                    </FormControl>
+                    {/* <Stack alignItems="center" direction="row" gap={2}>
+                    </Stack> */}
+                </Grid>
+                <FeeSearch open={openFeeSearch} openClose={openCloseFeeSearch} setSelection={setSelectFeeSearch}
+                    idServicioSelect={1} idTipoTerapiaSelect={entity.idTipo} servicioEnabled={0} tipoEnabled={0} />
                 {/* <Grid item xs={6} sm={3}>
                     <TextField
                         disabled
@@ -299,19 +296,55 @@ const Therapy = () => {
                         label="Monto Tarifa"
                         fullWidth
                         value={entity.montoTarifa}
-                        // onChange={setDataEntity}
                         size="small"
                     />
                 </Grid>
                 <Grid item xs={6} sm={3}>
-                    {/* <FormControl required fullWidth error={validate.idEstado && validation.idEstado.error}> */}
+                    <TextField
+                        required
+                        name="fechaInicio"
+                        label="Fecha Inicio"
+                        fullWidth
+                        type="date"
+                        //defaultValue={moment()}
+                        value={moment(entity.fechaInicio).format('yyyy-MM-DD')}
+                        onChange={setDataEntity}
+                        error={validate.fechaInicio && validation.fechaInicio.error}
+                        helperText={validate.fechaInicio && validation.fechaInicio.error ? validation.fechaInicio.message : ""}
+                        size="small"
+                    />
+                </Grid>
+                <Grid item xs={6} sm={3}>
+                    <FormControl fullWidth>
+                        <InputLabel htmlFor="input-salon">Salon</InputLabel>
+                        <Select
+                            //native={!tiposDocumentos.length == 0}
+                            native
+                            //defaultValue={0}
+                            label="Salon"
+                            value={entity.idSalon}
+                            fullWidth
+                            onChange={(event, newValue) => {
+                                dispatch(setData({name: "idSalon", value: event.target.value}))
+                            }}
+                            inputProps={{
+                                name: 'idSalon',
+                                id: 'input-salon',
+                            }}
+                            size="small"
+                        >
+                            <option key={0} value={0}>{"(Seleccione)"}</option>
+                            {listSalones.map((row) => (
+                                <option key={row.id} value={row.id}>{row.descripcion}</option>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Grid>
+                <Grid item xs={6} sm={3}>
                     <FormControl required fullWidth>
                         <InputLabel htmlFor="input-estado">Estado</InputLabel>
                         <Select
-                            //native={!sexos.length == 0}
                             native
-                            //value={personaNatural.idSexo == null ? 33 : personaNatural.idSexo}
-                            // defaultValue={0}
                             label="Estado"
                             value={entity.idEstado}
                             onChange={setDataEntity}
@@ -321,12 +354,11 @@ const Therapy = () => {
                             }}
                             size="small"
                         >
-                            <option key={0} value={0}>{""}</option>
+                            <option key={0} value={0}>{"(Seleccione)"}</option>
                             {listEstados.map((row) => (
                                 <option key={row.id} value={row.id}>{row.descripcion}</option>
                             ))}
                         </Select>
-                        {/* <HelperText>{validate.idEstado && validation.idEstado.error ? validation.idEstado.message : ""}</HelperText> */}
                     </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6}>

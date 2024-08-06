@@ -20,6 +20,14 @@ const useStyles = makeStyles((theme) => ({
           "& .MuiGrid-root": {
               padding: "5px 0px 0px 0px",
           },
+    },
+    tableRow: {
+        '&:nth-of-type(even)': {
+            backgroundColor: theme.palette.action.selected,
+        },
+        '&:last-child td, &:last-child th': {
+            borderRadius: '0.5em 0.5em 0.5em 0.5em'
+        },
     }
 }));
 
@@ -74,17 +82,6 @@ const PersonContact = () => {
         dispatch(setDatoPersonaContacto({numero: numero, name: name, value: value}))
     }
 
-    const StyledTableRow = styled(TableRow)(({ theme }) => ({
-        '&:nth-of-type(even)': {
-            backgroundColor: theme.palette.action.selected,
-            // backgroundColor: "gray",
-        },
-        // hide last border
-        '&:last-child td, &:last-child th': {
-            borderRadius: '0.5em 0.5em 0.5em 0.5em'
-        },
-      }));
-
     return (
         <Grid container>
             <Grid item>
@@ -106,7 +103,7 @@ const PersonContact = () => {
                 <Table size="small" classes={{root: classes.paddingTableCell}}>
                     <TableBody>
                         {personaContactos.map((row) => (
-                            <StyledTableRow key={row.numero}>
+                            <TableRow key={row.numero} classes={{root: classes.tableRow}}>
                                 <TableCell>
                                     <Grid container spacing={1} padding={1}>
                                         <Grid item xs={8} sm={5}>
@@ -166,7 +163,7 @@ const PersonContact = () => {
                                         </Grid>
                                     </Grid>
                                 </TableCell>
-                            </StyledTableRow>
+                            </TableRow>
                         ))}
                     </TableBody>
                 </Table>

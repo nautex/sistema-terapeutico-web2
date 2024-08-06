@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PersonaNatural from '../../components/PersonaNatural'
-import { useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import PersonDirection from '../../components/PersonDirection'
 import axios from 'axios';
 import { Grid, Card, CardContent, Typography, Button, Snackbar, Alert, Box } from '@mui/material';
@@ -68,10 +68,7 @@ const Edit = (props) => {
           setPropsMessage({ severity: "success", message: "Se guardaron los datos con exito" })
           setOpenMessage(true);
 
-          if (personaNatural.id == 0){
-            navigate("/person");
-          }
-          else{
+          if (personaNatural.id > 0){
             axios.get("https://localhost:44337/Persona/GetPersonasDireccionesViewByIdPersona?idPersona=" + personaNatural.id)
             .then(directions => {
               if (directions.data.data === null || directions.data.data.length === 0)
@@ -118,7 +115,7 @@ const Edit = (props) => {
           }
         })
         .catch(error => {
-          setPropsMessage({ severity: "success", message: "Hubo un error" })
+          setPropsMessage({ severity: "error", message: "Hubo un error" })
           setOpenMessage(true);
         });
     }
@@ -126,11 +123,21 @@ const Edit = (props) => {
 
   return (
     <div>
-      <Typography variant="h6" component="span">
-        <Box sx={{ fontWeight: 'bold' }}>
-          {(params.id == 0 ? "Nueva" : "Editar") + " Persona"}
-        </Box>
-      </Typography>
+      <Grid container spacing={0}>
+        <Grid item xs={6} sm={6}>
+          <Typography variant="h5" component="span">
+            <Box sx={{ fontWeight: 'bold' }}>
+              {(params.id == 0 ? "Nueva" : "Editar") + " Persona"}
+            </Box>
+          </Typography>
+        </Grid>
+        <Grid item xs={6} sm={6}>
+          <Box textAlign='right'>
+            <Link to={'/person'} >{"Volver"}</Link>
+          </Box>
+        </Grid>
+      </Grid>
+      
       <Typography gutterBottom component="span">
         <Box textAlign='center' padding={1}>
           <Button variant="outlined" size='small' onClick={() => {personaPost()}}>
@@ -185,7 +192,8 @@ const Edit = (props) => {
           </Button>
         </Box>
       </Typography>
-      <Snackbar open={openMessage} autoHideDuration={5000} onClose={onCloseMessage}>
+      <Snackbar open={openMessage} autoHideDuration={5000} onClose={onCloseMessage}
+        anchorOrigin={{vertical: "top", horizontal: "center"}}>
         <Alert onClose={onCloseMessage} severity={propsMessage.severity}>
           {propsMessage.message}
         </Alert>

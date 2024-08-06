@@ -7,7 +7,7 @@ AS
 		,b.IdPersona
 		,if(c.Nombres IS NULL, '', c.Nombres) AS Participante
 		,a.IdEstado
-		,d.Descripcion AS Estado
+		,d.Abreviado AS Estado
 		,a.FechaRegistro
 		,a.UsuarioRegistro
 		,a.FechaModificacion

@@ -23,6 +23,14 @@ const useStyles = makeStyles((theme) => ({
           "& .MuiGrid-root": {
               padding: "5px 0px 0px 0px",
           },
+    },
+    tableRow: {
+        '&:nth-of-type(even)': {
+            backgroundColor: theme.palette.action.selected,
+        },
+        '&:last-child td, &:last-child th': {
+            borderRadius: '0.5em 0.5em 0.5em 0.5em'
+        },
     }
 }));
 
@@ -99,17 +107,6 @@ const TherapySchedule = () => {
             });
         dispatch(remove(selectNumero));
     }
- 
-    const StyledTableRow = styled(TableRow)(({ theme }) => ({
-        '&:nth-of-type(even)': {
-            backgroundColor: theme.palette.action.selected,
-            // backgroundColor: "gray",
-        },
-        // hide last border
-        '&:last-child td, &:last-child th': {
-            borderRadius: '0.5em 0.5em 0.5em 0.5em'
-        },
-      }));
 
     return (
         <Grid container>
@@ -133,7 +130,7 @@ const TherapySchedule = () => {
                 <Table size="small" classes={{root: classes.paddingTableCell}}>
                     <TableBody>
                         {entity.map((row) => (
-                            <StyledTableRow key={row.numero}>
+                            <TableRow key={row.numero} classes={{root: classes.tableRow}}>
                                 <TableCell>
                                     <Grid container spacing={1} padding={1}>
                                         <Grid item xs={5} sm={4}>
@@ -168,13 +165,14 @@ const TherapySchedule = () => {
                                                 </HelperText> */}
                                             </FormControl>
                                         </Grid>
-                                        <Grid item xs={5} sm={3}>
+                                        <Grid item xs={5} sm={4}>
                                             <TextField
                                                 required
                                                 label="Hora Inicio"
                                                 type="time"
                                                 value={row.horaInicio}
                                                 onChange={(e) => {
+                                                    console.log(e.target.value)
                                                     setItemValue(row.numero, "horaInicio", e.target.value)
                                                 }}
                                                 InputLabelProps={{
@@ -226,7 +224,7 @@ const TherapySchedule = () => {
                                         </Grid>
                                     </Grid>
                                 </TableCell>
-                            </StyledTableRow>
+                            </TableRow>
                         ))}
                     </TableBody>
                 </Table>

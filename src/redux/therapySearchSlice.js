@@ -4,9 +4,11 @@ const initialState = {
     filters: {
         idLocal: 0,
         member: "",
-        therapist: ""
+        therapist: "",
+        idEstado: 2,
     },
     listLocales: [],
+    listEstados: [],
     results: [],
 }
 
@@ -24,9 +26,12 @@ export const therapySearchSlice = createSlice({
         },
         setLocales: (state, action) => {
             state.listLocales = action.payload;
-        }
+        },
+        setListEstados: (state, action) => {
+            state.listEstados = action.payload;
+        },
     },
 });
 
-export const { setValue, setResults, setLocales } = therapySearchSlice.actions;
+export const { setValue, setResults, setLocales, setListEstados } = therapySearchSlice.actions;
 export default therapySearchSlice.reducer;

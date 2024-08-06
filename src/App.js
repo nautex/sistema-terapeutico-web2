@@ -7,7 +7,8 @@ import MuiAppBar from '@mui/material/AppBar';
 import { Menu as MenuIcon, Inbox as InboxIcon, Person as PersonIcon, RecordVoiceOver as RecordVoiceOverIcon
   , EmojiPeople as EmojiPeopleIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon
   , CalendarMonth as CalendarMonthIcon, AssignmentInd as AssignmentIndIcon, EscalatorWarning as EscalatorWarningIcon
-  , ContentPasteSearch as ContentPasteSearchIcon, Badge as BadgeIcon } from "@mui/icons-material";
+  , ContentPasteSearch as ContentPasteSearchIcon, Badge as BadgeIcon, AddCard as AddCardIcon, NoteAlt as NoteAltIcon
+  , Calculate as CalculateIcon, BarChart as BarChartIcon } from "@mui/icons-material";
 import { BrowserRouter as Router, Link, Route, Routes } from "react-router-dom";
 import Person from "./containers/Person/Index";
 import PersonEdit from "./containers/Person/Edit";
@@ -15,7 +16,18 @@ import Member from "./containers/Member/Index";
 import MemberEdit from "./containers/Member/Edit";
 import Therapy from './containers/Therapy/Index';
 import TherapyEdit from './containers/Therapy/Edit';
+import TherapyPlan from './containers/TherapyPlan/Index';
+import TherapyPlanEdit from './containers/TherapyPlan/Edit';
+import TherapyPeriod from './containers/TherapyPeriod/Index';
+import Period from './containers/Period/Index';
+import PeriodEdit from './containers/Period/Edit';
+import TherapyPeriodOpen from './containers/TherapyPeriod/Open';
+import SessionTherapist from './containers/Session/IndexTherapist';
+import SessionEdit from './containers/Session/Edit';
+import Session from './containers/Session/Index';
 import useWindowSize from './components/useWindowSize';
+import Fee from './containers/Fee/Index';
+import FeeEdit from './containers/Fee/Edit';
 
 var drawerWidth = 240;
 
@@ -125,6 +137,14 @@ function App() {
       </Tooltip>
     },
     {
+      title: "Tarifa",
+      path: "/fee",
+      icon:
+      <Tooltip title="Tarifas" placement="right-end">
+        <CalculateIcon aria-label="Tarifas" />
+      </Tooltip>
+    },
+    {
       title: "Terapias",
       path: "/therapy",
       icon:
@@ -133,19 +153,43 @@ function App() {
       </Tooltip>
     },
     {
+      title: "Planes de Terapia",
+      path: "/therapyplan",
+      icon:
+      <Tooltip title="Planes de Terapia" placement="right-end">
+        <BarChartIcon aria-label="Planes de Terapia" />
+      </Tooltip>
+    },
+    {
       title: "Periodos",
-      path: "/",
+      path: "/period",
       icon:
       <Tooltip title="Periodos" placement="right-end">
         <CalendarMonthIcon aria-label="Periodos" />
       </Tooltip>
     },
     {
-      title: "Sesiones",
-      path: "/",
+      title: "Periodos de Terapias",
+      path: "/therapyPeriod",
+      icon:
+      <Tooltip title="Periodos de Terapias" placement="right-end">
+        <AddCardIcon aria-label="Periodos de Terapias" />
+      </Tooltip>
+    },
+    {
+      title: "Sesiones de Terapeuta",
+      path: "/session/24",
       icon:
       <Tooltip title="Sesiones" placement="right-end">
         <EscalatorWarningIcon aria-label="Sesiones" />
+      </Tooltip>
+    },
+    {
+      title: "Sesiones",
+      path: "/session",
+      icon:
+      <Tooltip title="Sesiones" placement="right-end">
+        <NoteAltIcon aria-label="Sesiones" />
       </Tooltip>
     },
     {
@@ -236,6 +280,17 @@ function App() {
                 <Route path="/member/edit/:id" element={<MemberEdit />}></Route>
                 <Route path="/therapy" element={<Therapy />} ></Route>
                 <Route path="/therapy/edit/:id" element={<TherapyEdit />} ></Route>
+                <Route path="/therapyplan" element={<TherapyPlan />} ></Route>
+                <Route path="/therapyplan/edit/:id/:idTerapia" element={<TherapyPlanEdit />} ></Route>
+                <Route path="/period" element={<Period />} ></Route>
+                <Route path="/period/edit/:id" element={<PeriodEdit />} ></Route>
+                <Route path="/therapyPeriod" element={<TherapyPeriod />} ></Route>
+                <Route path="/therapyPeriod/open" element={<TherapyPeriodOpen />} ></Route>
+                <Route path="/session" element={<Session />} ></Route>
+                <Route path="/session/:id" element={<SessionTherapist />} ></Route>
+                <Route path="/session/edit/:id/:idTerapiaPeriodo" element={<SessionEdit />} ></Route>
+                <Route path="/fee" element={<Fee />} ></Route>
+                <Route path="/fee/edit/:id" element={<FeeEdit />} ></Route>
                 <Route path="/nosotros"></Route>
                 <Route path="/"></Route>
               </Routes>

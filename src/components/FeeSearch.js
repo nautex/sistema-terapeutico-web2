@@ -35,6 +35,8 @@ const FeeSearch = (props) => {
     const dispatch = useDispatch();
     const [selectItem, setSelectItem] = useState([]);
     const [cargando, setCargando] = useState(false);
+    const [servicioEnabled, setServicioEnabled] = useState(true);
+    const [tipoEnabled, setTipoEnabled] = useState(true);
     const classes = useStyles();
     const dialogRef = useRef()
 
@@ -42,11 +44,12 @@ const FeeSearch = (props) => {
         setCargando(true);
 
         const response = await axios
-            .get('https://localhost:44337/Servicio/GetsTarifaByIdServicioOrIdLocalOrSesionesMes?'
+            .get('https://localhost:44337/Servicio/GetsTarifaView?'
                 + "idServicio=" + filters.idServicio
                 + "&idLocal=" + filters.idLocal
                 + "&idTipo=" + filters.idTipo
                 + "&sesionesMes=" + filters.sesionesMes
+                + "&idEstado=2"
                 )
             .catch((err) => {
                 console.log("Err: ", err)
@@ -64,6 +67,7 @@ const FeeSearch = (props) => {
             });
 
         dispatch(setListServicios(response.data.data));
+        
     }, [])
 
     const fetchLocales = useCallback(async () => {
@@ -84,6 +88,7 @@ const FeeSearch = (props) => {
             });
 
         dispatch(setListTipos(response.data.data));
+        
     }, [])
 
     useEffect(() => {
@@ -91,6 +96,12 @@ const FeeSearch = (props) => {
         fetchLocales();
         fetchTipos();
     }, [])
+
+    useEffect(() => {
+        dispatch(setData({name: "idServicio", value: props.idServicioSelect}))
+        dispatch(setData({name: "idTipo", value: props.idTipoTerapiaSelect}))
+        dispatch(setResults([]))
+    }, [props])
 
     function CustomToolbar() {
         return (
@@ -122,6 +133,11 @@ const FeeSearch = (props) => {
         { field: 'monto', headerName: 'Monto', width: 80, sortable: false },
     ];
 
+    // setServicioEnabled(false)
+    // setTipoEnabled(false)
+    // setServicioEnabled(props.servicioEnabled)
+    // setTipoEnabled(props.tipoEnabled)
+
     return (
         <Dialog
             open={props.open}
@@ -144,6 +160,7 @@ const FeeSearch = (props) => {
                                 native
                                 // native={!listServicios.length == 0}
                                 //defaultValue={0}
+                                // disabled={!servicioEnabled}
                                 label="Servicio"
                                 value={filters.idServicio}
                                 onChange={(event, newValue) => {
@@ -155,8 +172,34 @@ const FeeSearch = (props) => {
                                 }}
                                 size="small"
                             >
-                                <option key={0} value={0}>{""}</option>
+                                <option key={0} value={0}>{"(Todos)"}</option>
                                 {listServicios.map((row) => (
+                                    <option key={row.id} value={row.id}>{row.descripcion}</option>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={3}>
+                        <FormControl required fullWidth>
+                            <InputLabel htmlFor="input-tipo">Tipo</InputLabel>
+                            <Select
+                                native
+                                // native={!listServicios.length == 0}
+                                //defaultValue={0}
+                                // disabled={!tipoEnabled}
+                                label="Tipo"
+                                value={filters.idTipo}
+                                onChange={(event, newValue) => {
+                                    dispatch(setData({name: "idTipo", value: event.target.value}))
+                                }}
+                                inputProps={{
+                                    name: 'idTipo',
+                                    id: 'input-tipo',
+                                }}
+                                size="small"
+                            >
+                                <option key={0} value={0}>{"(Todos)"}</option>
+                                {listTipos.map((row) => (
                                     <option key={row.id} value={row.id}>{row.descripcion}</option>
                                 ))}
                             </Select>
@@ -180,33 +223,8 @@ const FeeSearch = (props) => {
                                 }}
                                 size="small"
                             >
-                                <option key={0} value={0}>{""}</option>
+                                <option key={0} value={0}>{"(Todos)"}</option>
                                 {listLocales.map((row) => (
-                                    <option key={row.id} value={row.id}>{row.descripcion}</option>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={12} sm={3}>
-                        <FormControl required fullWidth>
-                            <InputLabel htmlFor="input-tipo">Tipo</InputLabel>
-                            <Select
-                                native
-                                // native={!listServicios.length == 0}
-                                //defaultValue={0}
-                                label="Tipo"
-                                value={filters.idTipo}
-                                onChange={(event, newValue) => {
-                                    dispatch(setData({name: "idTipo", value: event.target.value}))
-                                }}
-                                inputProps={{
-                                    name: 'idTipo',
-                                    id: 'input-tipo',
-                                }}
-                                size="small"
-                            >
-                                <option key={0} value={0}>{""}</option>
-                                {listTipos.map((row) => (
                                     <option key={row.id} value={row.id}>{row.descripcion}</option>
                                 ))}
                             </Select>

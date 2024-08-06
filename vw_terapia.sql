@@ -1,5 +1,34 @@
 alter VIEW vw_terapia
 AS
+	with ltbl_terapiaterapeuta AS 
+	(
+		SELECT
+			a.IdTerapia
+			,ROW_NUMBER() OVER (PARTITION BY a.IdTerapia ORDER BY a.IdTerapia, a.Numero)  AS Orden
+			,a.IdTerapeuta
+			,if(c.Seudonimo IS NULL, b.Nombres, c.Seudonimo) AS Terapeuta
+		FROM terapiaterapeuta a 
+		left join persona b ON
+			a.IdTerapeuta = b.IdPersona
+		left join trabajador c ON
+			a.IdTerapeuta = c.IdTrabajador
+		where
+			a.IdTipoCargo = 54
+			and a.IdEstado = 2
+	)
+	, ltbl_terapiaparticipante AS 
+	(
+		SELECT
+			a.IdTerapia
+			,ROW_NUMBER() OVER (PARTITION BY a.IdTerapia ORDER BY a.IdTerapia, a.Numero)  AS Orden
+			,a.IdParticipante
+			,c.Nombres AS Participante
+		FROM terapiaparticipante a
+		LEFT JOIN participante b on
+			a.IdParticipante = b.IdParticipante
+		left join persona c ON
+			b.IdPersona = c.IdPersona
+	)
 	SELECT
 		a.IdTerapia
 		,a.IdLocal
@@ -17,8 +46,12 @@ AS
 		,a.MinutosSesion
 		,a.IdSalon
 		,e.Codigo AS Salon
+		,i.IdTerapeuta
+		,if(i.Terapeuta IS NULL, '', i.Terapeuta) AS Terapeuta
+		,j.IdParticipante
+		,if(j.Participante IS NULL, '', j.Participante) AS Participante
 		,a.IdEstado
-		,f.Descripcion AS Estado
+		,f.Abreviado AS Estado
 		,a.Observaciones
 		,a.FechaRegistro
 		,a.UsuarioRegistro
@@ -39,4 +72,11 @@ AS
 		c.IdServicio = g.IdServicio
 	left join catalogo h ON
 		a.IdTipo = h.IdCatalogo
+	LEFT JOIN ltbl_terapiaterapeuta i ON
+		a.IdTerapia = i.IdTerapia
+		AND i.Orden = 1
+	LEFT JOIN ltbl_terapiaparticipante j ON
+		a.IdTerapia = j.IdTerapia
+		AND j.Orden = 1
+		
 	

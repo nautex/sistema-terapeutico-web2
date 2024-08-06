@@ -64,7 +64,7 @@ const Index = () => {
 
     const columns = [
         // { field: 'id', headerName: 'ID', width: 50, sortable: false, headerAlign: 'center', align: 'center' },
-        { field: 'participante', headerName: 'Nombre Participante', width: 200, sortable: true, headerAlign: 'center'
+        { field: 'participante', headerName: 'Nombre Participante', width: 200, sortable: false, headerAlign: 'center'
             , renderCell: (cellValues) => {
                 return <Link to={'/member/edit/' + cellValues.row.id} style={{ color: 'inherit' }}>{cellValues.row.participante}</Link>;
             }
@@ -72,11 +72,11 @@ const Index = () => {
         // { field: 'terapeutaAsignado', headerName: 'Terapeuta Asig.', width: 200, sortable: true, headerAlign: 'center' },
         { field: 'fechaIngreso', headerName: 'Ingreso', width: 100, type: 'date'
             , valueFormatter: (value) => moment(value).format('D/MM/YYYY')
-            , sortable: true, headerAlign: 'center', align: 'center' },
-        { field: 'padre', headerName: 'Padre', width: 200, sortable: true, headerAlign: 'center' },
-        { field: 'madre', headerName: 'Madre', width: 200, sortable: true, headerAlign: 'center' },
-        { field: 'personasAutorizadas', headerName: 'Personas Aut.', width: 200, sortable: true, headerAlign: 'center' },
-        { field: 'lugarCasoAccidente', headerName: 'Lugar Caso Acc.', width: 150, sortable: true, headerAlign: 'center' },
+            , sortable: false, headerAlign: 'center', align: 'center' },
+        { field: 'padre', headerName: 'Padre', width: 200, sortable: false, headerAlign: 'center' },
+        { field: 'madre', headerName: 'Madre', width: 200, sortable: false, headerAlign: 'center' },
+        { field: 'personasAutorizadas', headerName: 'Personas Aut.', width: 200, sortable: false, headerAlign: 'center' },
+        { field: 'lugarCasoAccidente', headerName: 'Lugar Caso Acc.', width: 150, sortable: false, headerAlign: 'center' },
     ];
 
     function CustomToolbar() {

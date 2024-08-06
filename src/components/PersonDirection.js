@@ -25,6 +25,14 @@ const useStyles = makeStyles((theme) => ({
           },"& .MuiGrid-root>.MuiGrid-item": {
             paddingTop: "8px"
           },
+    },
+    tableRow: {
+        '&:nth-of-type(even)': {
+            backgroundColor: theme.palette.action.selected,
+        },
+        '&:last-child td, &:last-child th': {
+            borderRadius: '0.5em 0.5em 0.5em 0.5em'
+        },
     }
 }));
 
@@ -142,7 +150,7 @@ const PersonDirection = () => {
                         {
                             verMasUbigeo ?
                             personaDirecciones.map((row) => (
-                                <StyledTableRow key={row.numero}>
+                                <TableRow key={row.numero} classes={{root: classes.tableRow}}>
                                     <TableCell>
                                         <Grid container spacing={1} padding={1}>
                                             <Grid item xs={6} sm={2}>
@@ -236,10 +244,10 @@ const PersonDirection = () => {
                                             </Grid>
                                         </Grid>
                                     </TableCell>
-                                </StyledTableRow>
+                                </TableRow>
                             )) :
                             personaDirecciones.map((row) => (
-                                <StyledTableRow key={row.numero}>
+                                <TableRow key={row.numero} classes={{root: classes.tableRow}}>
                                     <TableCell>
                                         <Grid container spacing={1} padding={1}>
                                             <Grid item xs={6} sm={2}>
@@ -305,7 +313,7 @@ const PersonDirection = () => {
                                             </Grid>
                                         </Grid>
                                     </TableCell>
-                                </StyledTableRow>
+                                </TableRow>
                             ))
                         }
                     </TableBody>

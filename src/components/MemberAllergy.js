@@ -23,6 +23,14 @@ const useStyles = makeStyles((theme) => ({
           "& .MuiGrid-root": {
               padding: "5px 0px 0px 0px",
           },
+    },
+    tableRow: {
+        '&:nth-of-type(even)': {
+            backgroundColor: theme.palette.action.selected,
+        },
+        '&:last-child td, &:last-child th': {
+            borderRadius: '0.5em 0.5em 0.5em 0.5em'
+        },
     }
 }));
 
@@ -135,62 +143,7 @@ const MemberAllergy = () => {
             });
         dispatch(remove(selectNumero));
     }
-    // const buscarDocumentoExistente = (idTipoAlergia, detalle) => {
-    //     axios.get("https://localhost:44337/PersonaDocumento/GetPersonaDocumentoByTipoYNumero?idTipoAlergia="
-    //         + idTipoAlergia + "&detalle=" + detalle)
-    //     .then(document => {
-    //         setNumeroDocumentoExistente(document.data.data.length > 0);
-    //     })
-    //     .catch((err) => {
-    //         console.log("Err: ", err)
-    //     });
-    // }
-
-    // const validateDNIWith8Digits = (idTipoAlergia, detalle) => {
-    //     setDNIWith8Digits(idTipoAlergia == 6 && detalle.length != 8)
-    // }
-
-    // const validateAnyDocumentAtLeast3Digits = () => {
-    //     var countDocumentsWithLess3Digits = 0
-    //     var DNIWithout8Digits = false
-
-    //     for (let i = 0; i < entity.length; i++) {
-    //         var document = entity[i];
-
-    //         if (document.detalle.length < 3) countDocumentsWithLess3Digits++;
-    //         if (document.idTipoAlergia == 6 && document.detalle.length != 8) DNIWithout8Digits = true;
-    //         // if (countDocumentsWithLess3Digits > 0) i = entity.length
-    //     }
-
-    //     setAnyDocumentAtLeast3Digits(!!countDocumentsWithLess3Digits)
-    //     setDNIWith8Digits(DNIWithout8Digits)
-    // }
-
-    // const validateUniqueDocumentTypes = () => {
-    //     var countDuplicateDocumentTypes = 0
-
-    //     for (let i = 0; i < entity.length; i++) {
-    //         for (let j = i + 1; j < entity.length; j++) {
-    //             if (entity[i].idTipoAlergia == entity[j].idTipoAlergia) countDuplicateDocumentTypes++
-    //             if (countDuplicateDocumentTypes > 0) j = entity.length
-    //         }
-    //         if (countDuplicateDocumentTypes > 0) i = entity.length
-    //     }
-
-    //     setOnlyOneTypeDocument(!!countDuplicateDocumentTypes)
-    // }
-
-    const StyledTableRow = styled(TableRow)(({ theme }) => ({
-        '&:nth-of-type(even)': {
-            backgroundColor: theme.palette.action.selected,
-            // backgroundColor: "gray",
-        },
-        // hide last border
-        '&:last-child td, &:last-child th': {
-            borderRadius: '0.5em 0.5em 0.5em 0.5em'
-        },
-      }));
-
+    
     return (
         <Grid container>
             <Grid item>
@@ -207,27 +160,13 @@ const MemberAllergy = () => {
                     <IconAddCircle />
                 </IconButton>
             </Grid>
-            {/* <Grid container>
-                <Grid item>
-                    <Typography variant="h6">
-                        {"Alergias (" + (entity != null ? entity.length : 0) + ")"}
-                    </Typography>
-                </Grid>
-                <Grid item>
-                    <IconButton size="small" aria-label="Agregar Alergia" onClick={() => {
-                        dispatch(add(params.id));
-                    }}>
-                        <IconAddCircle />
-                    </IconButton>
-                </Grid>
-            </Grid> */}
             <Grid container>
                 {/* {JSON.stringify(entity)} */}
                 {/* {JSON.stringify(numeroDocumentoExistente)} */}
                 <Table size="small" classes={{root: classes.paddingTableCell}}>
                     <TableBody>
                         {entity.map((row) => (
-                            <StyledTableRow key={row.numero}>
+                            <TableRow key={row.numero} classes={{root: classes.tableRow}}>
                                 <TableCell>
                                     <Grid container spacing={1} padding={1}>
                                         <Grid item xs={8} sm={4}>
@@ -265,7 +204,7 @@ const MemberAllergy = () => {
                                                     }}
                                                     size="small"
                                                 >
-                                                    <option key={0} value={0}>{""}</option>
+                                                    <option key={0} value={0}>{"(Seleccione)"}</option>
                                                     {tiposAlergias.map((row) => (
                                                         <option key={row.id} value={row.id}>{row.descripcion}</option>
                                                     ))}
@@ -337,7 +276,7 @@ const MemberAllergy = () => {
                                         </Grid>
                                     </Grid>
                                 </TableCell>
-                            </StyledTableRow>
+                            </TableRow>
                         ))}
                     </TableBody>
                 </Table>

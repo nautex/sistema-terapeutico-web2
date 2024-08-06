@@ -2,16 +2,32 @@ alter VIEW vw_terapiaresumen
 AS
 	with ltbl_terapiaterapeuta AS 
 	(
-		SELECT
+		/*SELECT
 			a.IdTerapia
 			,GROUP_CONCAT(if(c.Seudonimo IS NULL, b.Nombres, c.Seudonimo) SEPARATOR ' - ') AS Terapeutas
 		FROM terapiaterapeuta a 
 		left join persona b ON
 			a.IdTerapeuta = b.IdPersona
 		left join trabajador c ON
-			a.IdTerapeuta = c.IdTrabajador
+			a.IdTerapeuta = c.IdPersona
+		where
+			a.IdTipoCargo = 54
+			and a.IdEstado = 2
 		GROUP BY
+			a.IdTerapia*/
+		SELECT
 			a.IdTerapia
+			,ROW_NUMBER() OVER (PARTITION BY a.IdTerapia ORDER BY a.IdTerapia, a.Numero)  AS Orden
+			,a.IdTerapeuta
+			,if(c.Seudonimo IS NULL, b.Nombres, c.Seudonimo) AS Terapeuta
+		FROM terapiaterapeuta a 
+		left join persona b ON
+			a.IdTerapeuta = b.IdPersona
+		left join trabajador c ON
+			a.IdTerapeuta = c.IdTrabajador
+		where
+			a.IdTipoCargo = 54
+			and a.IdEstado = 2
 	)
 	, ltbl_terapiahorario AS 
 	(
@@ -40,13 +56,16 @@ AS
 		,c.Codigo AS CodigoTarifa
 		,i.IdParticipante
 		,if(l.Nombres IS NULL, '-', l.Nombres) AS Participante
-		,if(g.Terapeutas IS NULL, '-', g.Terapeutas) AS Terapeutas
+		,g.IdTerapeuta
+		,if(g.Terapeuta IS NULL, '-', g.Terapeuta) AS Terapeuta
 		,if(h.Horario IS NULL, '-', h.Horario) AS Horario
 		,e.Codigo AS Salon
 		#,c.Monto AS MontoTarifa
 		,a.FechaInicio
-		#,d.Descripcion AS Modalidad
+		,a.IdTipo
+		,d.Descripcion AS Tipo
 		#,a.SesionesMes
+		,a.IdEstado
 		,f.Abreviado AS Estado
 	from terapia a 
 	left join local b ON
@@ -54,13 +73,14 @@ AS
 	left join tarifa c ON
 		a.IdTarifa = c.IdTarifa
 	left join catalogo d ON
-		a.IdModalidad = d.IdCatalogo
+		a.IdTipo = d.IdCatalogo
 	left join salon e ON
 		a.IdSalon = e.IdSalon
 	left join catalogo f ON
 		a.IdEstado = f.IdCatalogo
 	LEFT JOIN ltbl_terapiaterapeuta g on
 		a.IdTerapia = g.IdTerapia
+		AND g.Orden = 1
 	LEFT JOIN ltbl_terapiahorario h on
 		a.IdTerapia = h.IdTerapia
 	LEFT JOIN terapiaparticipante i on

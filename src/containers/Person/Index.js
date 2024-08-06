@@ -60,14 +60,14 @@ const Index = () => {
 
     const columns = [
         // { field: 'id', headerName: 'ID', width: 50, sortable: false, headerAlign: 'center', align: 'center' },
-        { field: 'nombres', headerName: 'Nombres', width: 200, sortable: true, headerAlign: 'center'
+        { field: 'nombres', headerName: 'Nombres', width: 200, sortable: false, headerAlign: 'center'
             , renderCell: (cellValues) => {
                 return <Link to={'/person/edit/' + cellValues.row.id} style={{ color: 'inherit' }}>{cellValues.row.nombres}</Link>;
             }
         },
         { field: 'tipoDocumento', headerName: 'Tip. Doc.', width: 100, sortable: false, headerAlign: 'center' },
         { field: 'numeroDocumento', headerName: 'Nom. Doc.', width: 120, sortable: false, headerAlign: 'center' },
-        { field: 'tipoPersona', headerName: 'Tip. Per.', width: 120, sortable: true, headerAlign: 'center' },
+        { field: 'tipoPersona', headerName: 'Tip. Per.', width: 120, sortable: false, headerAlign: 'center' },
         { field: 'fechaNacimiento', headerName: 'Fec. Nac.', width: 120, type: 'date'
             , valueFormatter: (params) => moment(params).format('D/MM/YYYY')
             , sortable: true, headerAlign: 'center', align: 'center' },
@@ -195,6 +195,9 @@ const Index = () => {
                                 color: 'primary.main',
                             },
                             overflowX: 'scroll',
+                            "& .MuiDataGrid-cellContent": {
+                                minHeight: 100
+                              }
                             }}
                         />
                     </Box>

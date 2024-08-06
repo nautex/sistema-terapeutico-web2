@@ -1,7 +1,8 @@
 import { CircularProgress, Button, Grid, Typography, TextField, Box, Hidden, Card, CardContent
-    , FormControl, InputLabel, Select } from "@mui/material";
+    , FormControl, InputLabel, Select, IconButton } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { Search as IconSearch, Add as IconAdd } from "@mui/icons-material";
+import { Search as IconSearch, Add as IconAdd, IndeterminateCheckBox as IconIndeterminateCheckBox
+    , CheckBox as IconCheckBox } from "@mui/icons-material";
 import axios from "axios";
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from "react";
@@ -9,8 +10,9 @@ import moment from "moment";
 import { Link, useNavigate } from "react-router-dom";
 import { DataGrid, GridToolbarContainer, GridToolbarExport, GridOverlay
     , GridToolbarFilterButton } from "@mui/x-data-grid";
-import { setValue, setLocales } from '../../redux/therapySearchSlice';
+import { setValue, setLocales, setListEstados } from '../../redux/therapySearchSlice';
 import { setPersonList } from "../../redux/personSlice";
+import DialogYesNo from '../../components/DialogYesNo';
 
 const useStyles = makeStyles((theme) => ({
     styleCircularProgress: {
@@ -30,22 +32,18 @@ const useStyles = makeStyles((theme) => ({
 const Index = () => {
     const filters = useSelector((state) => state.therapySearch.filters);
     const listLocales = useSelector((state) => state.therapySearch.listLocales);
+    const listEstados = useSelector((state) => state.therapySearch.listEstados);
+
+    const [openDialogAnnulActive, setOpenDialogAnnulActive] = useState(false)
+    const openCloseDialogAnnulActive = () => { setOpenDialogAnnulActive(!openDialogAnnulActive); }
+    const [selectId, setSelectId] = useState(null);
+    const [selectState, setSelectState] = useState(null);
+
     const classes = useStyles();
     const [cargando, setCargando] = useState(true);
     const [results, setResults] = useState([]);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    useEffect(() => {
-        axios.get('https://localhost:44337/Terapia/GetsTerapiaResumenViewAll')
-            .then(function (response) {
-                setResults(response.data.data);
-                setCargando(false);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }, [])
 
     const fetchResults = async () => {
         setCargando(true);
@@ -54,7 +52,9 @@ const Index = () => {
             .get('https://localhost:44337/Terapia/GetsTerapiaResumenViewByIdLocalOrMemberOrTherapist?'
                 + 'idLocal=' + (filters.idLocal == null ? 0 : filters.idLocal)
                 + '&member=' + (filters.member == null ? "" : filters.member)
-                + '&therapist=' + (filters.therapist == null ? "" : filters.therapist))
+                + '&therapist=' + (filters.therapist == null ? "" : filters.therapist)
+                + '&idEstado=' + (filters.idEstado == null ? "" : filters.idEstado)
+            )
             .then((response) => {
                 setResults(response.data.data);
                 setCargando(false);
@@ -73,9 +73,40 @@ const Index = () => {
                 console.log("Err: ", err)
             });
     }
+    const fetchEstados = async () => {
+        await axios
+            .get('https://localhost:44337/Catalogo/GetCatalogosByIdPadreInLista?'
+            + 'idPadre=1'
+            )
+            .then((response) => {
+                dispatch(setListEstados(response.data.data));
+                dispatch(setValue({name: "idEstado", value: 2}))
+            })
+            .catch((err) => {
+                console.log("Err: ", err)
+            });
+    }
+    const annul = async () => {
+        await axios
+            .post("https://localhost:44337/Terapia/AnnulTerapia?idTerapia=" + selectId)
+            .catch((err) => {
+                console.log("Err: ", err);
+            });
+            fetchResults();
+    }
+    const active = async () => {
+        await axios
+            .post("https://localhost:44337/Terapia/ActiveTerapia?idTerapia=" + selectId)
+            .catch((err) => {
+                console.log("Err: ", err);
+            });
+            fetchResults();
+    }
 
     useEffect(() => {
+        fetchResults();
         fetchLocales();
+        fetchEstados();
     }, []);
 
     const columns = [
@@ -86,15 +117,26 @@ const Index = () => {
                 return <Link to={'/therapy/edit/' + cellValues.row.idTerapia} style={{ color: 'inherit' }}>{cellValues.row.participante}</Link>;
             }
         },
-        { field: 'terapeutas', headerName: 'Terapeutas', width: 180, sortable: true, headerAlign: 'center' },
+        { field: 'terapeuta', headerName: 'Terapeuta', width: 180, sortable: false, headerAlign: 'center' },
         { field: 'local', headerName: 'Local', width: 80, sortable: false, headerAlign: 'center', align: 'center' },
-        { field: 'horario', headerName: 'Horario', width: 250, sortable: true, headerAlign: 'center' },
+        { field: 'horario', headerName: 'Horario', width: 250, sortable: false, headerAlign: 'center' },
         { field: 'codigoTarifa', headerName: 'Tarifa', width: 80, sortable: false, headerAlign: 'center', align: 'center' },
-        { field: 'salon', headerName: 'Salon', width: 100, sortable: true, headerAlign: 'center' },
+        { field: 'salon', headerName: 'Salon', width: 100, sortable: false, headerAlign: 'center' },
         { field: 'fechaInicio', headerName: 'Inicio', width: 120, type: 'date'
             , valueFormatter: (value) => moment(value).format('D/MM/YYYY')
-            , sortable: true, headerAlign: 'center', align: 'center' },
-        { field: 'estado', headerName: 'Estado', width: 80, sortable: true, headerAlign: 'center' },
+            , sortable: false, headerAlign: 'center', align: 'center' },
+        { field: 'estado', headerName: 'Estado', width: 80, sortable: false, headerAlign: 'center' },
+        { field: 'anular', headerName: '', width: 80, sortable: false, headerAlign: 'center', align: 'center'
+            , renderCell: (cellValues) => {
+                return <IconButton aria-label="anular" size='small' style={{height: 10}} align={"center"} onClick={() => {
+                    setSelectId(cellValues.row.idTerapia);
+                    setSelectState(cellValues.row.estado);
+                    setOpenDialogAnnulActive(true);
+                }}>
+                    { cellValues.row.estado == "A" ? <IconIndeterminateCheckBox /> : <IconCheckBox /> }
+                </IconButton>;
+            }
+        },
     ];
 
     function CustomToolbar() {
@@ -143,18 +185,7 @@ const Index = () => {
                         <CardContent sx={{ padding: "10px 10px 10px 10px !important" }}>
                             <Grid container item xs={12} sm={12} spacing={1} padding={0}>
                                 <Grid item xs={6} sm={2}>
-                                    {/* <TextField
-                                        // required
-                                        name="local"
-                                        label="Local"
-                                        value={filters.local}
-                                        fullWidth
-                                        onChange={(event) => {
-                                            dispatch(setValue({name: "local", value: event.target.value}))
-                                        }}
-                                        size="small"
-                                    /> */}
-                                    <FormControl>
+                                    <FormControl fullWidth>
                                         <InputLabel htmlFor="input-local">Local</InputLabel>
                                         <Select
                                             //native={!sexos.length == 0}
@@ -205,6 +236,29 @@ const Index = () => {
                                         size="small"
                                     />
                                 </Grid>
+                                <Grid item xs={6} sm={2}>
+                                    <FormControl fullWidth>
+                                        <InputLabel htmlFor="input-estado">Estado</InputLabel>
+                                        <Select
+                                            native
+                                            label="Estado"
+                                            value={filters.idEstado}
+                                            onChange={(event) => {
+                                                dispatch(setValue({name: "idEstado", value: event.target.value}))
+                                            }}
+                                            inputProps={{
+                                                name: 'idEstado',
+                                                id: 'input-estado',
+                                            }}
+                                            size="small"
+                                        >
+                                            <option key={0} value={0}>{"(Todos)"}</option>
+                                            {listEstados.map((row) => (
+                                                <option key={row.id} value={row.id}>{row.descripcion}</option>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
                                 <Grid item xs={2} sm={2}>
                                     <Button variant="outlined" size="small" onClick={() => {
                                         fetchResults()
@@ -251,6 +305,11 @@ const Index = () => {
                         />
                     </Box>
                 </Grid>
+                <DialogYesNo open={openDialogAnnulActive} openClose={openCloseDialogAnnulActive} setYes={ selectState == "A" ? annul : active} 
+                    setNo={() => { return }}
+                    titulo={(selectState == "A" ? "Anular" : "Activar") + " Terapia"}
+                    texto={"Esta seguro de " + (selectState == "A" ? "anular" : "activar") + " la terapia?"} >
+                </DialogYesNo>
             </Grid>
         </div>
     )

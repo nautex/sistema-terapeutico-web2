@@ -129,12 +129,14 @@ const PersonaNatural = () => {
             {/* {JSON.stringify(validation)}
             {JSON.stringify(validate)} */}
             {/* {JSON.stringify(personaNatural)} */}
-            <Typography variant="h7" gutterBottom>
-                <Box sx={{ fontWeight: 'bold' }} padding={1}>
-                    Datos Basicos
+            <Grid item>
+                <Box sx={{ fontWeight: 'bold' }} padding={0}>
+                    <Typography variant="h7">
+                        Datos Basicos
+                    </Typography>
                 </Box>
-            </Typography>
-            <Grid container spacing={2}>
+            </Grid>
+            <Grid container spacing={2} padding={"12px 0px 0px 0px"}>
                 <Grid item xs={6} sm={3}>
                     <TextField
                         required

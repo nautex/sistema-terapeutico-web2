@@ -7,6 +7,7 @@ const initialState = {
         idLocal: 0,
         idTipo: 0,
         sesionesMes: 0,
+        idEstado: 2,
     },
     results: [],
     // results: {
@@ -33,6 +34,7 @@ const initialState = {
     listLocales: [{ id: 0, descripcion: "" }],
     listTipos: [{ id: 0, descripcion: "" }],
     listModalidades: [{ id: 0, descripcion: "" }],
+    listEstados: [{ id: 0, descripcion: "" }],
     select: {},
     source: ""
 }
@@ -61,8 +63,12 @@ export const feeSearchSlice = createSlice({
         setListModalidades: (state, action) => {
             state.listModalidades = action.payload;
         },
+        setListEstados: (state, action) => {
+            state.listEstados = action.payload;
+        },
     },
 });
 
-export const { setData, setResults, setListServicios, setListLocales, setListTipos, setListModalidades } = feeSearchSlice.actions;
+export const { setData, setResults
+    , setListServicios, setListLocales, setListTipos, setListModalidades, setListEstados } = feeSearchSlice.actions;
 export default feeSearchSlice.reducer;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Grid, Card, CardContent, Typography, Button, Snackbar, Alert, Box } from '@mui/material';
 import { Save as IconSave, Terrain } from "@mui/icons-material";
@@ -9,6 +9,7 @@ import TherapySchedule from '../../components/TherapySchedule'
 import TherapyTherapist from '../../components/TherapyTherapist'
 import TherapyMember from '../../components/TherapyMember'
 import { makeStyles } from "@mui/styles";
+import { activeValidations as activeValidationsTherapy } from '../../redux/therapySlice';
 import { setEntity as setTherapySchedule, activeValidations as activeTherapySchedule } from '../../redux/therapyScheduleSlice';
 import { setEntity as setTherapyTherapist, activeValidations as activeTherapyTherapist } from '../../redux/therapyTherapistSlice';
 import { setEntity as setTherapyMember, activeValidations as activeTherapyMember } from '../../redux/therapyMemberSlice';
@@ -53,6 +54,7 @@ const Edit = (props) => {
     console.log(ValidationMessages)
 
     if (ValidationMessages.length > 0) {
+      dispatch(activeValidationsTherapy());
       dispatch(activeTherapySchedule());
       dispatch(activeTherapyTherapist());
       dispatch(activeTherapyMember());
@@ -61,15 +63,12 @@ const Edit = (props) => {
       setOpenMessage(true);
     }
     else {
-      await axios.post("https://localhost:44337/Terapia/AddUpdateIndividualTherapyWithDetails", dataPost)
+      await axios.post("https://localhost:44337/Terapia/AddUpdateTherapyWithDetails", dataPost)
         .then(response => {
           setPropsMessage({ severity: "success", message: "Se guardaron los datos con exito" })
           setOpenMessage(true);
 
-          if (therapy.id == 0){
-            navigate("/therapy");
-          }
-          else{
+          if (therapy.id > 0){
             axios.get("https://localhost:44337/Terapia/GetsTerapiaHorarioView?idTerapia=" + therapy.id)
             .then(response => {
               if (response.data.data === null || response.data.data.length === 0)
@@ -105,7 +104,7 @@ const Edit = (props) => {
           }
         })
         .catch(error => {
-          setPropsMessage({ severity: "success", message: "Hubo un error" })
+          setPropsMessage({ severity: "error", message: "Hubo un error" })
           setOpenMessage(true);
         });
     }
@@ -113,11 +112,21 @@ const Edit = (props) => {
 
   return (
     <div>
-      <Typography variant="h5" component="span">
-        <Box sx={{ fontWeight: 'bold' }}>
-          {(params.id == 0 ? "Nueva" : "Editar") + " Terapia"}
-        </Box>
-      </Typography>
+      <Grid container spacing={0}>
+        <Grid item xs={6} sm={6}>
+          <Typography variant="h5" component="span">
+            <Box sx={{ fontWeight: 'bold' }}>
+              {(params.id == 0 ? "Nueva" : "Editar") + " Terapia"}
+            </Box>
+          </Typography>
+        </Grid>
+        <Grid item xs={6} sm={6}>
+          <Box textAlign='right'>
+            <Link to={'/therapy'} >{"Volver"}</Link>
+          </Box>
+        </Grid>
+      </Grid>
+
       <Typography component="span">
         <Box textAlign='center' padding={1}>
           <Button variant="outlined" size='small' onClick={() => {postEntity()}}>
@@ -165,7 +174,8 @@ const Edit = (props) => {
           </Button>
         </Box>
       </Typography>
-      <Snackbar open={openMessage} autoHideDuration={5000} onClose={onCloseMessage}>
+      <Snackbar open={openMessage} autoHideDuration={5000} onClose={onCloseMessage}
+        anchorOrigin={{vertical: "top", horizontal: "center"}}>
         <Alert onClose={onCloseMessage} severity={propsMessage.severity}>
           {propsMessage.message}
         </Alert>

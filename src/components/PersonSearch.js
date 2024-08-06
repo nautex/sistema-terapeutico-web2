@@ -74,7 +74,7 @@ const PersonSearch = (props) => {
     return (
         <Dialog
             open={props.open}
-            onClose={props.onClose}
+            onClose={props.openClose}
             fullWidth={true}
             maxWidth={"xl"}
             ref={dialogRef}

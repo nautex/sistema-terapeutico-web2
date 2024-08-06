@@ -97,7 +97,7 @@ const UbigeoSearch = (props) => {
                                 }}
                                 size="small"
                             >
-                                <option key={0} value={0}>{""}</option>
+                                <option key={0} value={0}>{"(Seleccione)"}</option>
                                 {paises.map((row) => (
                                     <option key={row.id} value={row.id}>{row.descripcion}</option>
                                 ))}

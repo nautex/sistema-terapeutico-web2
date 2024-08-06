@@ -21,6 +21,14 @@ const useStyles = makeStyles((theme) => ({
           "& .MuiGrid-root": {
               padding: "5px 0px 0px 0px",
           },
+    },
+    tableRow: {
+        '&:nth-of-type(even)': {
+            backgroundColor: theme.palette.action.selected,
+        },
+        '&:last-child td, &:last-child th': {
+            borderRadius: '0.5em 0.5em 0.5em 0.5em'
+        },
     }
 }));
 
@@ -115,7 +123,7 @@ const MemberAuthorizedPerson = () => {
                 <Table size="small" classes={{root: classes.paddingTableCell}}>
                     <TableBody>
                         {entity.map((row) => (
-                            <StyledTableRow key={row.numero}>
+                            <TableRow key={row.numero} classes={{root: classes.tableRow}}>
                                 <TableCell>
                                     <Grid container spacing={1} padding={1}>
                                         {/* <Grid item xs={5} sm={4}>
@@ -183,7 +191,7 @@ const MemberAuthorizedPerson = () => {
                                         </Grid>
                                     </Grid>
                                 </TableCell>
-                            </StyledTableRow>
+                            </TableRow>
                         ))}
                     </TableBody>
                 </Table>

@@ -23,6 +23,14 @@ const useStyles = makeStyles((theme) => ({
         "& .MuiGrid-root": {
             padding: "5px 0px 0px 0px",
         },
+    },
+    tableRow: {
+        '&:nth-of-type(even)': {
+            backgroundColor: theme.palette.action.selected,
+        },
+        '&:last-child td, &:last-child th': {
+            borderRadius: '0.5em 0.5em 0.5em 0.5em'
+        },
     }
 }));
 
@@ -70,7 +78,7 @@ const TherapyMember = () => {
     }, [])
     const fetchParticipantes = useCallback(async () => {
         const response = await axios
-            .get("https://localhost:44337/Persona/GetsListPersonByTypeAndName?idType=24&name=")
+            .get("https://localhost:44337/Participante/GetsParticipantesResumenView")
             .catch((err) => {
                 console.log("Err: ", err);
             });
@@ -120,17 +128,6 @@ const TherapyMember = () => {
         dispatch(remove(selectNumero));
     }
  
-    const StyledTableRow = styled(TableRow)(({ theme }) => ({
-        '&:nth-of-type(even)': {
-            backgroundColor: theme.palette.action.selected,
-            // backgroundColor: "gray",
-        },
-        // hide last border
-        '&:last-child td, &:last-child th': {
-            borderRadius: '0.5em 0.5em 0.5em 0.5em'
-        },
-      }));
-
     return (
         <Grid container>
             <Grid item>
@@ -153,7 +150,7 @@ const TherapyMember = () => {
                 <Table size="small" classes={{root: classes.paddingTableCell}}>
                     <TableBody>
                         {entity.map((row) => (
-                            <StyledTableRow key={row.numero}>
+                            <TableRow key={row.numero} classes={{root: classes.tableRow}}>
                                 <TableCell>
                                     <Grid container spacing={1} padding={1}>
                                         <Grid item xs={12} sm={8} >
@@ -171,16 +168,16 @@ const TherapyMember = () => {
                                                     }}
                                                     onChange={(event, newValue) => {
                                                         setItemValue(row.numero, "idParticipante", newValue == null ? 0 : newValue.id)
-                                                        setItemValue(row.numero, "participante", newValue == null ? "" : newValue.descripcion)
+                                                        setItemValue(row.numero, "participante", newValue == null ? "" : newValue.participante)
                                                     }}
                                                     options={listParticipantes}
                                                     autoHighlight
-                                                    getOptionLabel={(option) => option.descripcion == null ? "" : option.descripcion}
+                                                    getOptionLabel={(option) => option.participante == null ? "" : option.participante}
                                                     isOptionEqualToValue ={(option, value) => option.value === value.value}
                                                     renderOption={(props, option) => {
                                                         return (
                                                             <li {...props} key={option.id}>
-                                                            {option.descripcion}
+                                                            {option.participante}
                                                             </li>
                                                         );
                                                         }}
@@ -220,7 +217,7 @@ const TherapyMember = () => {
                                                     }}
                                                     size="small"
                                                 >
-                                                    <option key={0} value={0}>{""}</option>
+                                                    <option key={0} value={0}>{"(Seleccione)"}</option>
                                                     {listEstados.map((row) => (
                                                         <option key={row.id} value={row.id}>{row.descripcion}</option>
                                                     ))}
@@ -244,7 +241,7 @@ const TherapyMember = () => {
                                         </Grid>
                                     </Grid>
                                 </TableCell>
-                            </StyledTableRow>
+                            </TableRow>
                         ))}
                     </TableBody>
                 </Table>

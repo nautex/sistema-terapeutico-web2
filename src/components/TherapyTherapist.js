@@ -26,10 +26,18 @@ const useStyles = makeStyles((theme) => ({
         // "& .MuiCardContent-root": {
         //     padding: "0px 0px 0px 0px",
         // }
+    },
+    tableRow: {
+        '&:nth-of-type(even)': {
+            backgroundColor: theme.palette.action.selected,
+        },
+        '&:last-child td, &:last-child th': {
+            borderRadius: '0.5em 0.5em 0.5em 0.5em'
+        },
     }
 }));
 
-const TherapySchedule = () => {
+const TherapyTherapist = () => {
     const params = useParams();
     const entity = useSelector((state) => state.therapyTherapist.entity)
     const defaultEntity = useSelector((state) => state.therapyTherapist.defaultEntity)
@@ -136,17 +144,6 @@ const TherapySchedule = () => {
             });
         dispatch(remove(selectNumero));
     }
- 
-    const StyledTableRow = styled(TableRow)(({ theme }) => ({
-        '&:nth-of-type(even)': {
-            backgroundColor: theme.palette.action.selected,
-            // backgroundColor: "gray",
-        },
-        // hide last border
-        '&:last-child td, &:last-child th': {
-            borderRadius: '0.5em 0.5em 0.5em 0.5em'
-        },
-      }));
 
     return (
         <Grid container>
@@ -170,10 +167,10 @@ const TherapySchedule = () => {
                 <Table size="small" classes={{root: classes.paddingTableCell}}>
                     <TableBody>
                         {entity.map((row) => (
-                            <StyledTableRow key={row.numero}>
+                            <TableRow key={row.numero} classes={{root: classes.tableRow}}>
                                 <TableCell>
                                     <Grid container spacing={1} padding={1}>
-                                        <Grid item xs={12} sm={5} >
+                                        <Grid item xs={12} sm={4} >
                                             <FormControl required fullWidth error={validate.terapeuta && validation.terapeuta.error}>
                                                 <Autocomplete
                                                     name="idTerapeuta"
@@ -239,7 +236,7 @@ const TherapySchedule = () => {
                                                     }}
                                                     size="small"
                                                 >
-                                                    <option key={0} value={0}>{""}</option>
+                                                    <option key={0} value={0}>{"(Seleccione)"}</option>
                                                     {listTiposCargos.map((row) => (
                                                         <option key={row.id} value={row.id}>{row.descripcion}</option>
                                                     ))}
@@ -252,7 +249,7 @@ const TherapySchedule = () => {
                                                 </HelperText> */}
                                             </FormControl>
                                         </Grid>
-                                        <Grid item xs={6} sm={2}>
+                                        <Grid item xs={6} sm={3}>
                                             <TextField
                                                 required
                                                 name="fechaInicio"
@@ -267,7 +264,7 @@ const TherapySchedule = () => {
                                                 size="small"
                                             />
                                         </Grid>
-                                        <Grid item xs={6} sm={2}>
+                                        <Grid item xs={6} sm={3}>
                                             <TextField
                                                 name="fechaFin"
                                                 label="Fecha Fin"
@@ -281,7 +278,7 @@ const TherapySchedule = () => {
                                                 size="small"
                                             />
                                         </Grid>
-                                        {/* <Grid item xs={2} sm={2}>
+                                        <Grid item xs={4} sm={2}>
                                             <FormControl required fullWidth>
                                                 <InputLabel htmlFor="input-estado">Estado</InputLabel>
                                                 <Select
@@ -301,13 +298,13 @@ const TherapySchedule = () => {
                                                     }}
                                                     size="small"
                                                 >
-                                                    <option key={0} value={0}>{""}</option>
+                                                    <option key={0} value={0}>{"(Seleccione)"}</option>
                                                     {listEstados.map((row) => (
                                                         <option key={row.id} value={row.id}>{row.descripcion}</option>
                                                     ))}
                                                 </Select>
                                             </FormControl>
-                                        </Grid> */}
+                                        </Grid>
                                         <Grid item xs={1} sm={1}>
                                             <IconButton aria-label="delete" onClick={() => {
                                                 if (row.id > 0) {
@@ -325,7 +322,7 @@ const TherapySchedule = () => {
                                         </Grid>
                                     </Grid>
                                 </TableCell>
-                            </StyledTableRow>
+                            </TableRow>
                         ))}
                     </TableBody>
                 </Table>
@@ -351,4 +348,4 @@ const TherapySchedule = () => {
     )
 }
 
-export default TherapySchedule;
+export default TherapyTherapist;
