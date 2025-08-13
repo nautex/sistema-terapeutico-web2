@@ -85,11 +85,12 @@ const PersonDocument = () => {
         dispatch(setDatoPersonaDocumento({numero: numero, name: name, value: value}))
     }
 
-    const fetchPersonaDocumentos = async () => {
+    const fetchPersonaDocumentos = useCallback(async () => {
         await axios
             .get("https://localhost:44337/Persona/GetPersonasDocumentosViewByIdPersona?idPersona=" + params.id)
             .then((response) => {
-                if (response.data.data == null || response.data.data.length == 0){
+                console.log(response)
+                if (response.data.data === null || response.data.data.length === 0){
                     dispatch(setPersonaDocumentos(defaultPersonaDocumentos));
                 }
                 else
@@ -98,7 +99,7 @@ const PersonDocument = () => {
             .catch((err) => {
                 console.log("Err: ", err)
             });
-    }
+    }, [])
 
     const fetchTiposDocumentos = useCallback(async () => {
         const response = await axios
@@ -154,7 +155,7 @@ const PersonDocument = () => {
     }
 
     const validateDNIWith8Digits = (idTipoDocumento, numeroDocumento) => {
-        setDNIWith8Digits(idTipoDocumento == 6 && numeroDocumento.length != 8)
+        setDNIWith8Digits(idTipoDocumento == 6 && numeroDocumento != null && numeroDocumento.length != 8)
     }
 
     const validateAnyDocumentAtLeast3Digits = () => {
@@ -225,7 +226,7 @@ const PersonDocument = () => {
                                                     value={row.idTipoDocumento}
                                                     fullWidth
                                                     onChange={(event, newValue) => {
-                                                        if (event.target.value !== row.idTipoDocumento && row.numeroDocumento.length >= 6) {
+                                                        if (event.target.value !== row.idTipoDocumento && row.numeroDocumento != null && row.numeroDocumento.length >= 6) {
                                                             buscarDocumentoExistente(event.target.value, row.numeroDocumento)
                                                         }
 

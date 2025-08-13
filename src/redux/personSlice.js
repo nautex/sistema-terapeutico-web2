@@ -26,6 +26,10 @@ const initialState = {
       estadoCivil: "Soltero",
       idTipoPersona: 23,
       tipoPersona: "Padre",
+      idOcupacion: 0,
+      ocupacion: "",
+      idLugarTrabajo: 0,
+      lugarTrabajo: "",
       idEstado: 2,
       fechaRegistro: null,
       usuarioRegistro: null,
@@ -56,6 +60,10 @@ const initialState = {
       estadoCivil: "",
       idTipoPersona: 0,
       tipoPersona: "",
+      idOcupacion: 0,
+      ocupacion: "",
+      idLugarTrabajo: 0,
+      lugarTrabajo: "",
       idEstado: 0,
       fechaRegistro: null,
       usuarioRegistro: null,
@@ -65,6 +73,8 @@ const initialState = {
   sexos: [{ id: 0, descripcion: "" }],
   estadosCiviles: [{ id: 0, descripcion: "" }],
   tiposPersona: [{ id: 0, descripcion: "" }],
+  ocupaciones: [{ id: 0, descripcion: "" }],
+  lugaresTrabajo: [{ id: 0, descripcion: "" }],
   validationActive: {
       primerNombre: false,
       primerApellido: false,
@@ -78,7 +88,9 @@ const initialState = {
   personList: {
     id: 0,
     nombres: "",
-  }
+  },
+  tipoPersona: "",
+  nombreVinculado: "",
 }
 
 export const personSlice = createSlice({
@@ -105,6 +117,12 @@ export const personSlice = createSlice({
     setTiposPersona: (state, action) => {
       state.tiposPersona = action.payload;
     },
+    setOcupaciones: (state, action) => {
+      state.ocupaciones = action.payload;
+    },
+    setLugaresTrabajo: (state, action) => {
+      state.lugaresTrabajo = action.payload;
+    },
     setValidations: (state, action) => {
       state.validationMessage = action.payload;
     },
@@ -115,10 +133,17 @@ export const personSlice = createSlice({
     },
     setPersonList: (state, action) => {
       state.personList = action.payload;
-    }
+    },
+    setTipoPersona: (state, action) => {
+      state.tipoPersona = action.payload;
+    },
+    setNombreVinculado: (state, action) => {
+      state.nombreVinculado = action.payload;
+    },
   },
 });
 
-export const { setPersonaNatural, setDatoPersonaNatural, setSexos, setEstadosCiviles, setTiposPersona
-  , setValidations, activeValidationsPersonaNatural, setPersonList } = personSlice.actions;
+export const { setPersonaNatural, setDatoPersonaNatural, setSexos, setEstadosCiviles, setTiposPersona, setOcupaciones, setLugaresTrabajo
+  , setValidations, activeValidationsPersonaNatural, setPersonList
+  , setNombreVinculado, setTipoPersona, setTipoVinculo } = personSlice.actions;
 export default personSlice.reducer;

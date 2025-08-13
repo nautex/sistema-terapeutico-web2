@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Grid, Card, CardContent, Typography, Button, Snackbar, Alert, Box } from '@mui/material';
-import { Save as IconSave } from "@mui/icons-material";
+import { Save as IconSave, InsertDriveFile } from "@mui/icons-material";
 import Member from '../../components/Member'
 import MemberAllergy from '../../components/MemberAllergy'
 import MemberAuthorizedPerson from '../../components/MemberAuthorizedPerson'
@@ -30,63 +30,76 @@ const Edit = (props) => {
    const defaultParticipanteAlergia = useSelector((state) => state.memberAllergy.defaultEntity)
    const defaultParticipanteAuthorizedPerson = useSelector((state) => state.memberAuthorizedPerson.defaultEntity)
    const classes = useStyles();
-  const [openMessage, setOpenMessage] = useState(false)
+  
+   const [openMessage, setOpenMessage] = useState(false)
   const onCloseMessage = () => { setOpenMessage(!openMessage); }
   const [propsMessage, setPropsMessage] = useState({ severity: "success", message: "" });
+  const [enabledSave, setEnabledSave] = useState(true)
+  const [idNew, setIdNew] = useState(0)
+
   const dispatch = useDispatch();
   const params = useParams();
   const navigate = useNavigate();
+
   const postEntity = async () => {
-    var dataPost = {
-      ...participante
-      , idTerapeuta: parseInt(participante.idTerapeuta)
-      , participanteAlergia: participanteAlergia, participantePersonaAutorizada: participantePersonaAutorizada
-    }
-
-    var ValidationMessages = participanteValidation.concat(participanteAlergiaValidation)
-
-    if (ValidationMessages.length > 0) {
-      dispatch(activeMemberAllergy());
-      dispatch(activeMemberAuthorizedPerson());
-      dispatch(activeValidationsMember());
-
-      setPropsMessage({ severity: "error", message: ValidationMessages.join(" - ") })
-      setOpenMessage(true);
+    if (idNew > 0){
+      navigate('/person/edit/0/' + participante.idPersona + '/23');
     }
     else {
-      await axios.post("https://localhost:44337/Participante/AddUpdateParticipanteWithDetails", dataPost)
-        .then(response => {
-          setPropsMessage({ severity: "success", message: "Se guardaron los datos con exito" })
-          setOpenMessage(true);
+      var dataPost = {
+        ...participante
+        //, idTerapeuta: parseInt(participante.idTerapeuta)
+        , participanteAlergia: participanteAlergia, participantePersonaAutorizada: participantePersonaAutorizada
+      }
 
-          if (participante.id > 0){
-            axios.get("https://localhost:44337/Participante/GetsParticipanteAlergiaViewById?idParticipante=" + participante.id)
-            .then(response => {
-              if (response.data.data === null || response.data.data.length === 0)
-                dispatch(setMemberAllergy(defaultParticipanteAlergia));
-              else
-                dispatch(setMemberAllergy(response.data.data));
-            })
-            .catch((err) => {
-              console.log("Err: ", err);
-            });
+      var ValidationMessages = participanteValidation.concat(participanteAlergiaValidation)
 
-            axios.get("https://localhost:44337/Participante/GetsParticipantePersonaAutorizadaViewById?idParticipante=" + participante.id)
-            .then(response => {
-              if (response.data.data === null || response.data.data.length === 0)
-                dispatch(setMemberAuthorizedPerson(defaultParticipanteAuthorizedPerson));
-              else
-                dispatch(setMemberAuthorizedPerson(response.data.data));
-            })
-            .catch((err) => {
-              console.log("Err: ", err);
-            });
-          }
-        })
-        .catch(error => {
-          setPropsMessage({ severity: "error", message: "Hubo un error" })
-          setOpenMessage(true);
-        });
+      if (ValidationMessages.length > 0) {
+        dispatch(activeMemberAllergy());
+        dispatch(activeMemberAuthorizedPerson());
+        dispatch(activeValidationsMember());
+
+        setPropsMessage({ severity: "error", message: ValidationMessages.join(" - ") })
+        setOpenMessage(true);
+      }
+      else {
+        await axios.post("https://localhost:44337/Participante/AddUpdateParticipanteWithDetails", dataPost)
+          .then(response => {
+            setPropsMessage({ severity: "success", message: "Se guardaron los datos con exito" })
+            setOpenMessage(true);
+            //setEnabledSave(false);
+
+            setIdNew(parseInt(response.data.data))
+
+            if (participante.id > 0){
+              axios.get("https://localhost:44337/Participante/GetsParticipanteAlergiaViewById?idParticipante=" + participante.id)
+              .then(response => {
+                if (response.data.data === null || response.data.data.length === 0)
+                  dispatch(setMemberAllergy(defaultParticipanteAlergia));
+                else
+                  dispatch(setMemberAllergy(response.data.data));
+              })
+              .catch((err) => {
+                console.log("Err: ", err);
+              });
+
+              axios.get("https://localhost:44337/Participante/GetsParticipantePersonaAutorizadaViewById?idParticipante=" + participante.id)
+              .then(response => {
+                if (response.data.data === null || response.data.data.length === 0)
+                  dispatch(setMemberAuthorizedPerson(defaultParticipanteAuthorizedPerson));
+                else
+                  dispatch(setMemberAuthorizedPerson(response.data.data));
+              })
+              .catch((err) => {
+                console.log("Err: ", err);
+              });
+            }
+          })
+          .catch(error => {
+            setPropsMessage({ severity: "error", message: "Hubo un error" })
+            setOpenMessage(true);
+          });
+      }
     }
   }
 
@@ -96,7 +109,7 @@ const Edit = (props) => {
         <Grid item xs={6} sm={6}>
           <Typography variant="h5" component="span">
             <Box sx={{ fontWeight: 'bold' }}>
-              {(params.id == 0 ? "Nueva" : "Editar") + " Participante"}
+              {(params.id == 0 ? "Nuevo" : "Editar") + " Participante"}
             </Box>
           </Typography>
         </Grid>
@@ -109,8 +122,8 @@ const Edit = (props) => {
 
       <Typography  component="span">
         <Box textAlign='center' padding={1}>
-          <Button variant="outlined" size='small' onClick={() => {postEntity()}}>
-            Guardar
+          <Button variant="outlined" size='small' onClick={() => {postEntity()}} disabled={!enabledSave}>
+            {(params.id > 0 ? "Guardar" : idNew > 0 ? "Registrar al Padre" : "Guardar")}
             <IconSave />
           </Button>
         </Box>
@@ -142,7 +155,7 @@ const Edit = (props) => {
       <Typography component="span">
         <Box textAlign='center' padding={1}>
           <Button variant="outlined" size='small' onClick={() => {postEntity()}}>
-            Guardar
+            {(params.id > 0 ? "Guardar" : idNew > 0 ? "Registrar al Padre" : "Guardar")}
             <IconSave />
           </Button>
         </Box>

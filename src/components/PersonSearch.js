@@ -69,6 +69,7 @@ const PersonSearch = (props) => {
         { field: 'nombres', headerName: 'Nombres', width: 200, sortable: true },
         { field: 'tipoDocumento', headerName: 'Tip.Doc.', width: 100, sortable: false },
         { field: 'numeroDocumento', headerName: 'Num.Doc.', width: 100, sortable: false },
+        { field: 'esEmpresa', headerName: 'Empresa', width: 30, sortable: false },
     ];
 
     return (

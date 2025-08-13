@@ -65,7 +65,7 @@ const Member = () => {
     }, [])
     const fetchListParticipantes = useCallback(async () => {
         const response = await axios
-            .get("https://localhost:44337/Persona/GetsListPersonByTypeAndName?idType=24&name=")
+            .get("https://localhost:44337/Persona/GetsListNaturalPersonByTypeAndName?idType=24&name=")
             .catch((err) => {
                 console.log("Err: ", err);
             });

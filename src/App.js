@@ -275,7 +275,7 @@ function App() {
               <Routes>
                 <Route path="/contactanos"></Route>
                 <Route path="/person" element={<Person />} ></Route>
-                <Route path="/person/edit/:id" element={<PersonEdit />}></Route>
+                <Route path="/person/edit/:id/:idPersona/:idTipoPersona" element={<PersonEdit />}></Route>
                 <Route path="/member" element={<Member />} ></Route>
                 <Route path="/member/edit/:id" element={<MemberEdit />}></Route>
                 <Route path="/therapy" element={<Therapy />} ></Route>

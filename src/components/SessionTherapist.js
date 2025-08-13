@@ -100,7 +100,7 @@ const SessionTherapist = () => {
     }, [])
     const fetchTerapeutas = useCallback(async () => {
         const response = await axios
-            .get("https://localhost:44337/Persona/GetsListPersonByTypeAndName?idType=25&name=")
+            .get("https://localhost:44337/Persona/GetsListNaturalPersonByTypeAndName?idType=25&name=")
             .catch((err) => {
                 console.log("Err: ", err);
             });

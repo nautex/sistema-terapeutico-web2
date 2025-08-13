@@ -1,4 +1,4 @@
-import { FormControl, Grid, IconButton, InputLabel, Select, TextField, Typography, Box } from '@mui/material';
+import { FormControl, Grid, IconButton, InputLabel, Select, TextField, Typography, Box, Autocomplete } from '@mui/material';
 import { Search as IconSearch } from "@mui/icons-material";
 import axios from 'axios';
 import moment from 'moment';
@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { setDatoPersonaNatural, setEstadosCiviles, setPersonaNatural, setSexos
-    , setTiposPersona, setValidations } from "../redux/personSlice";
+    , setTiposPersona, setOcupaciones, setLugaresTrabajo, setValidations } from "../redux/personSlice";
 import UbigeoSearch from './UbigeoSearch';
 import { FormHelperText as HelperText } from '@mui/material';
 
@@ -19,6 +19,9 @@ const PersonaNatural = () => {
     const sexos = useSelector((state) => state.person.sexos);
     const estadosCiviles = useSelector((state) => state.person.estadosCiviles);
     const tiposPersona = useSelector((state) => state.person.tiposPersona);
+    const ocupaciones = useSelector((state) => state.person.ocupaciones);
+    const lugaresTrabajo = useSelector((state) => state.person.lugaresTrabajo);
+
     const dispatch = useDispatch();
     const [openUbigeoSearch, setOpenUbigeoSearch] = useState(false)
     const fechaIngresoMinimo = new Date(2010, 1, 1);
@@ -92,12 +95,30 @@ const PersonaNatural = () => {
             });
         dispatch(setTiposPersona(response.data.data));
     }, [])
+    const fetchOcupaciones = useCallback(async () => {
+        const response = await axios
+            .get("https://localhost:44337/Catalogo/GetCatalogosByIdPadreInLista?idPadre=94")
+            .catch((err) => {
+                console.log("Err: ", err);
+            });
+        dispatch(setOcupaciones(response.data.data));
+    }, [])
+    const fetchLugaresTrabajo = useCallback(async () => {
+        const response = await axios
+            .get("https://localhost:44337/Persona/GetsListLegalPersonByTypeAndName?idPadre=-1&name=")
+            .catch((err) => {
+                console.log("Err: ", err);
+            });
+        dispatch(setLugaresTrabajo(response.data.data));
+    }, [])
 
     useEffect(() => {
         fetchPersonaNatural();
         fetchSexos();
         fetchEstadosCiviles();
         fetchTiposPersona();
+        fetchOcupaciones();
+        fetchLugaresTrabajo();
         dispatch(setValidations(messagesValidation()));
     }, []);
 
@@ -297,12 +318,100 @@ const PersonaNatural = () => {
                         size="small"
                     />
                 </Grid>
-                <Grid item xs={2} sm={2}>
+                <Grid item xs={2} sm={1}>
                     <IconButton aria-label="Buscar Ubigeo" size='small' onClick={() => {
                         openCloseUbigeoSearch()
                     }}>
                         <IconSearch />
                     </IconButton>
+                </Grid>
+                <Grid item xs={12} sm={5} >
+                    <FormControl fullWidth>
+                        <Autocomplete
+                            name="idOcupacion"
+                            value={personaNatural.idOcupacion == null ? 0 : personaNatural.idOcupacion}
+                            inputValue={personaNatural.ocupacion == null ? "" : personaNatural.ocupacion}
+                            onInputChange={(event, newValue) => {
+                                if (event != null) {
+                                    if (event.type === "change") {
+                                        dispatch(setDatoPersonaNatural({name: "ocupacion", value: newValue == null ? "" : newValue}))
+                                    }
+                                }
+                            }}
+                            onChange={(event, newValue) => {
+                                dispatch(setDatoPersonaNatural({name: "idOcupacion", value: newValue == null ? 0 : newValue.id}))
+                                dispatch(setDatoPersonaNatural({name: "ocupacion", value: newValue == null ? "" : newValue.descripcion}))
+                            }}
+                            options={ocupaciones}
+                            autoHighlight
+                            getOptionLabel={(option) => option.descripcion == null ? "" : option.descripcion}
+                            isOptionEqualToValue ={(option, value) => option.value === value.value}
+                            renderOption={(props, option) => {
+                                return (
+                                    <li {...props} key={option.id}>
+                                    {option.descripcion}
+                                    </li>
+                                );
+                                }}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Ocupacion"
+                                    variant="outlined"
+                                    inputProps={{
+                                        ...params.inputProps,
+                                        autoComplete: 'new-password',
+                                    }}
+                                />
+                            )}
+                            size="small"
+                        />
+                        {/* <HelperText>{validate.terapeuta && validation.terapeuta.error ? validation.terapeuta.message : ""}</HelperText> */}
+                    </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={6} >
+                    <FormControl fullWidth>
+                        <Autocomplete
+                            name="idLugarTrabajo"
+                            value={personaNatural.idLugarTrabajo == null ? 0 : personaNatural.idLugarTrabajo}
+                            inputValue={personaNatural.lugarTrabajo == null ? "" : personaNatural.lugarTrabajo}
+                            onInputChange={(event, newValue) => {
+                                if (event != null) {
+                                    if (event.type === "change") {
+                                        dispatch(setDatoPersonaNatural({name: "lugarTrabajo", value: newValue == null ? "" : newValue}))
+                                    }
+                                }
+                            }}
+                            onChange={(event, newValue) => {
+                                dispatch(setDatoPersonaNatural({name: "idLugarTrabajo", value: newValue == null ? 0 : newValue.id}))
+                                dispatch(setDatoPersonaNatural({name: "lugarTrabajo", value: newValue == null ? "" : newValue.descripcion}))
+                            }}
+                            options={lugaresTrabajo}
+                            autoHighlight
+                            getOptionLabel={(option) => option.descripcion == null ? "" : option.descripcion}
+                            isOptionEqualToValue ={(option, value) => option.value === value.value}
+                            renderOption={(props, option) => {
+                                return (
+                                    <li {...props} key={option.id}>
+                                    {option.descripcion}
+                                    </li>
+                                );
+                                }}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Lugar de Trabajo"
+                                    variant="outlined"
+                                    inputProps={{
+                                        ...params.inputProps,
+                                        autoComplete: 'new-password',
+                                    }}
+                                />
+                            )}
+                            size="small"
+                        />
+                        {/* <HelperText>{validate.terapeuta && validation.terapeuta.error ? validation.terapeuta.message : ""}</HelperText> */}
+                    </FormControl>
                 </Grid>
             </Grid>
             <UbigeoSearch open={openUbigeoSearch} openClose={openCloseUbigeoSearch} setSelection={setSelectUbigeoSearch} />

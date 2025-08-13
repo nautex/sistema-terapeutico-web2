@@ -62,7 +62,7 @@ const Index = () => {
         // { field: 'id', headerName: 'ID', width: 50, sortable: false, headerAlign: 'center', align: 'center' },
         { field: 'nombres', headerName: 'Nombres', width: 200, sortable: false, headerAlign: 'center'
             , renderCell: (cellValues) => {
-                return <Link to={'/person/edit/' + cellValues.row.id} style={{ color: 'inherit' }}>{cellValues.row.nombres}</Link>;
+                return <Link to={'/person/edit/' + cellValues.row.id + '/0/0'} style={{ color: 'inherit' }}>{cellValues.row.nombres}</Link>;
             }
         },
         { field: 'tipoDocumento', headerName: 'Tip. Doc.', width: 100, sortable: false, headerAlign: 'center' },
@@ -72,14 +72,15 @@ const Index = () => {
             , valueFormatter: (params) => moment(params).format('D/MM/YYYY')
             , sortable: true, headerAlign: 'center', align: 'center' },
         { field: 'celular', headerName: 'Celular', width: 120, sortable: false, headerAlign: 'center' },
-        { field: 'email', headerName: 'Email', width: 120, sortable: false, headerAlign: 'center' }
+        { field: 'email', headerName: 'Email', width: 120, sortable: false, headerAlign: 'center' },
+        { field: 'empresa', headerName: 'Empresa', width: 30, sortable: false, headerAlign: 'center' },
     ];
 
     function CustomToolbar() {
         return (
             <GridToolbarContainer>
                 <Button size="small" onClick={() => {
-                    navigate(`/person/edit/0`);
+                    navigate(`/person/edit/0/0/0`);
                 }}>
                     Nuevo
                     <IconAdd />
